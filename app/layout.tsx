@@ -1,20 +1,35 @@
 import type { Metadata } from "next";
-import { Inter, Geist } from "next/font/google";
+import { Fraunces, Manrope } from "next/font/google";
+
+import { Providers } from "@/components/providers";
+import { isClerkConfigured } from "@/lib/env";
+
 import "./globals.css";
-import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
   display: "swap",
+  variable: "--font-sans",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-heading",
 });
 
 export const metadata: Metadata = {
-  title: "Persys — Distribuidora Mayorista",
+  title: "Persys | Catálogo B2B y administración comercial",
   description:
-    "Persys es una distribuidora mayorista de productos para supermercados en Argentina. Más de 10 años de experiencia, más de 2.000 productos.",
-  keywords: ["distribuidora", "mayorista", "supermercados", "Argentina", "Persys"],
+    "Landing, catálogo B2B, checkout por WhatsApp y panel administrativo para pedidos y catálogo de Persys.",
+  keywords: [
+    "distribuidora",
+    "mayorista",
+    "supermercados",
+    "shop b2b",
+    "panel pedidos",
+    "Persys",
+  ],
 };
 
 export default function RootLayout({
@@ -22,9 +37,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const clerkEnabled = isClerkConfigured();
+
   return (
-    <html lang="es" className={cn("h-full", "antialiased", inter.className, "font-sans", geist.variable)}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html
+      lang="es"
+      className={`${manrope.variable} ${fraunces.variable} h-full antialiased`}
+    >
+      <body className="min-h-full font-sans">
+        <Providers clerkEnabled={clerkEnabled}>{children}</Providers>
+      </body>
     </html>
   );
 }

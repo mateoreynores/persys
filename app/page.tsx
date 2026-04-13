@@ -1,199 +1,190 @@
-export default function Home() {
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowRight, Building2, ChartNoAxesColumn, MessageCircleMore, Store } from "lucide-react";
+
+import { SiteFooter } from "@/components/site/site-footer";
+import { SiteHeader } from "@/components/site/site-header";
+import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { getFeaturedLandingProducts, getRuntimeModeLabel } from "@/lib/store/repository";
+import { formatCurrency } from "@/lib/format";
+import { cn } from "@/lib/utils";
+
+export default async function Home() {
+  const [featuredProducts, runtimeMode] = await Promise.all([
+    getFeaturedLandingProducts(),
+    Promise.resolve(getRuntimeModeLabel()),
+  ]);
+
   return (
-    <>
-      {/* Navbar */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="text-xl font-bold text-navy tracking-tight">Persys</span>
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-            <a href="#servicios" className="hover:text-accent transition-colors">Servicios</a>
-            <a href="#nosotros" className="hover:text-accent transition-colors">Nosotros</a>
-            <a href="#contacto" className="hover:text-accent transition-colors">Contacto</a>
-          </nav>
-          <a
-            href="#contacto"
-            className="text-sm font-medium bg-accent text-white px-4 py-2 rounded-md hover:opacity-90 transition-opacity"
-          >
-            Consultanos
-          </a>
-        </div>
-      </header>
-
+    <div className="min-h-screen">
+      <SiteHeader />
       <main className="flex-1">
+        <section className="hero-grid overflow-hidden">
+          <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-24">
+            <div className="space-y-8">
+              <Badge variant="secondary" className="rounded-full px-4 py-1 text-xs uppercase">
+                {runtimeMode} · shop B2B + admin
+              </Badge>
+              <div className="space-y-6">
+                <h1 className="max-w-4xl text-5xl font-semibold text-balance sm:text-6xl lg:text-7xl">
+                  Distribución mayorista con pedido listo para WhatsApp y control interno.
+                </h1>
+                <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
+                  Persys ahora combina landing, catálogo comercial, carrito editable y un panel para
+                  gestionar productos, descuentos de oferta y pedidos sin sumar complejidad de pago.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/shop" className={cn(buttonVariants({ variant: "default", size: "lg" }))}>
+                  Ir al catálogo
+                  <ArrowRight />
+                </Link>
+                <Link href="/admin" className={cn(buttonVariants({ variant: "outline", size: "lg" }))}>
+                  Abrir panel
+                </Link>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                {[
+                  { value: "+2.000", label: "productos listos para operar" },
+                  { value: "B2B", label: "checkout enfocado en compras mayoristas" },
+                  { value: "WA", label: "confirmación comercial desde WhatsApp" },
+                ].map((item) => (
+                  <div key={item.label} className="surface-panel p-5">
+                    <p className="text-2xl font-semibold">{item.value}</p>
+                    <p className="mt-2 text-sm text-muted-foreground">{item.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        {/* Hero */}
-        <section id="inicio" className="hero-pattern py-20 md:py-28">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="max-w-2xl">
-              <h1 className="text-5xl md:text-6xl font-bold text-navy leading-tight tracking-tight">
-                Distribución mayorista para supermercados
-              </h1>
-              <p className="mt-6 text-lg text-gray-500 font-light leading-relaxed">
-                Proveemos productos de almacén, frescos, limpieza y bebidas a supermercados de todo el país.
-                Más de 10 años conectando productores con puntos de venta.
-              </p>
-              <div className="mt-8">
-                <a
-                  href="#contacto"
-                  className="inline-block bg-accent text-white font-medium px-7 py-3 rounded-md hover:opacity-90 transition-opacity"
-                >
-                  Consultanos
-                </a>
+            <div className="surface-panel relative overflow-hidden p-6 sm:p-8">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(69,96,198,0.14),_transparent_32%)]" />
+              <div className="relative space-y-5">
+                <div className="flex items-center justify-between">
+                  <Badge>Operación conectada</Badge>
+                  <span className="text-xs text-muted-foreground">Sin pasarela de pago</span>
+                </div>
+                <div className="space-y-4">
+                  {[
+                    {
+                      icon: Store,
+                      title: "Shop comercial",
+                      text: "Catálogo filtrable con precios visibles, destacados y carrito persistente.",
+                    },
+                    {
+                      icon: MessageCircleMore,
+                      title: "Checkout híbrido",
+                      text: "La orden se registra y luego continúa por WhatsApp con el resumen listo.",
+                    },
+                    {
+                      icon: ChartNoAxesColumn,
+                      title: "Panel operativo",
+                      text: "Pedidos y catálogo administrados desde una sola interfaz protegida.",
+                    },
+                  ].map((item) => (
+                    <Card key={item.title} className="rounded-[1.5rem] border-border/60 bg-background/85">
+                      <CardContent className="flex gap-4 p-5">
+                        <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                          <item.icon className="size-5" />
+                        </div>
+                        <div>
+                          <p className="font-semibold">{item.title}</p>
+                          <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.text}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Servicios */}
-        <section id="servicios" className="py-20 md:py-28 bg-white">
-          <div className="max-w-6xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-navy mb-4">Nuestros productos</h2>
-            <p className="text-lg text-gray-500 mb-12 max-w-xl">
-              Contamos con un catálogo amplio para cubrir todas las góndolas de tu negocio.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-              {/* Almacén */}
-              <div className="card bg-white rounded-lg p-6">
-                <div className="mb-4">
-                  <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
-                </div>
-                <h3 className="text-base font-semibold text-navy mb-2">Almacén</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Aceites, conservas, pastas, harinas, legumbres y todos los productos secos esenciales.
-                </p>
-              </div>
-
-              {/* Frescos y Lácteos */}
-              <div className="card bg-white rounded-lg p-6">
-                <div className="mb-4">
-                  <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-base font-semibold text-navy mb-2">Frescos y Lácteos</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Leches, yogures, quesos, fiambres y productos refrigerados con cadena de frío garantizada.
-                </p>
-              </div>
-
-              {/* Limpieza e Higiene */}
-              <div className="card bg-white rounded-lg p-6">
-                <div className="mb-4">
-                  <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </div>
-                <h3 className="text-base font-semibold text-navy mb-2">Limpieza e Higiene</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Detergentes, lavandinas, papel, artículos de higiene personal y cuidado del hogar.
-                </p>
-              </div>
-
-              {/* Bebidas y Snacks */}
-              <div className="card bg-white rounded-lg p-6">
-                <div className="mb-4">
-                  <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                  </svg>
-                </div>
-                <h3 className="text-base font-semibold text-navy mb-2">Bebidas y Snacks</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Gaseosas, jugos, aguas, cervezas, golosinas y snacks de las principales marcas.
-                </p>
-              </div>
-
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mb-10 flex items-end justify-between gap-6">
+            <div>
+              <Badge variant="secondary">Muestras del catálogo</Badge>
+              <h2 className="mt-4 text-3xl font-semibold">Productos destacados listos para vender</h2>
             </div>
+            <Link href="/shop" className={cn(buttonVariants({ variant: "outline" }), "hidden sm:inline-flex")}>
+              Ver catálogo completo
+            </Link>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {featuredProducts.map((product) => (
+              <Card key={product.id} className="rounded-[2rem] overflow-hidden">
+                <div className="relative h-52 w-full">
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                </div>
+                <CardContent className="space-y-4 p-6">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-primary/70">{product.categoryName}</p>
+                    <CardTitle className="mt-2 text-xl">{product.name}</CardTitle>
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">{product.description}</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      {product.salePriceCents ? (
+                        <p className="text-sm text-muted-foreground line-through">
+                          {formatCurrency(product.priceCents)}
+                        </p>
+                      ) : null}
+                      <p className="text-2xl font-semibold">
+                        {formatCurrency(product.salePriceCents ?? product.priceCents)}
+                      </p>
+                    </div>
+                    <Link href="/shop" className={cn(buttonVariants({ variant: "default" }))}>
+                      Comprar
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
 
-        {/* Stats / Nosotros */}
-        <section id="nosotros" className="py-20 md:py-28 bg-gray-50">
-          <div className="max-w-6xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-navy mb-4">Por qué elegirnos</h2>
-            <p className="text-lg text-gray-500 mb-16 max-w-xl">
-              Años de experiencia, un catálogo completo y cobertura nacional nos distinguen.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              <div>
-                <p className="text-5xl font-bold text-accent">+10</p>
-                <p className="mt-2 text-base font-medium text-navy">Años de experiencia</p>
-                <p className="mt-1 text-sm text-gray-500">Trabajando con supermercados de todo el país desde nuestros inicios.</p>
-              </div>
-              <div>
-                <p className="text-5xl font-bold text-accent">+2.000</p>
-                <p className="mt-2 text-base font-medium text-navy">Productos disponibles</p>
-                <p className="mt-1 text-sm text-gray-500">Un catálogo amplio para que tu supermercado tenga todo lo que necesita.</p>
-              </div>
-              <div>
-                <p className="text-5xl font-bold text-accent">Nacional</p>
-                <p className="mt-2 text-base font-medium text-navy">Cobertura en todo el país</p>
-                <p className="mt-1 text-sm text-gray-500">Llegamos a clientes en todas las provincias de Argentina.</p>
-              </div>
-            </div>
+        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+          <div className="grid gap-6 lg:grid-cols-3">
+            {[
+              {
+                icon: Building2,
+                title: "Pensado para compras B2B",
+                text: "Empresa, contacto, CUIT, ciudad de entrega y notas quedan asociados al pedido.",
+              },
+              {
+                icon: MessageCircleMore,
+                title: "WhatsApp como último paso",
+                text: "El cliente no paga online: confirma comercialmente por mensaje, con el pedido ya registrado.",
+              },
+              {
+                icon: ChartNoAxesColumn,
+                title: "Gestión comercial interna",
+                text: "Pedidos con estados, descuentos por oferta y catálogo editable desde admin.",
+              },
+            ].map((item) => (
+              <Card key={item.title} className="rounded-[2rem]">
+                <CardContent className="space-y-4 p-6">
+                  <div className="flex size-12 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
+                    <item.icon className="size-5" />
+                  </div>
+                  <h3 className="text-xl font-semibold">{item.title}</h3>
+                  <p className="text-sm leading-6 text-muted-foreground">{item.text}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
-
-        {/* Contacto */}
-        <section id="contacto" className="py-20 md:py-28 bg-white">
-          <div className="max-w-6xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-navy mb-4">Contacto</h2>
-            <p className="text-lg text-gray-500 mb-12 max-w-xl">
-              ¿Sos dueño de un supermercado o responsable de compras? Escribinos y te asesoramos.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl">
-
-              {/* Dirección */}
-              <div className="flex gap-4">
-                <div className="shrink-0 mt-1">
-                  <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-navy mb-1">Dirección</p>
-                  {/* PLACEHOLDER_ADDRESS */}
-                  <p className="text-sm text-gray-500">Calle Ejemplo 1234, Ciudad Autónoma de Buenos Aires, Argentina</p>
-                </div>
-              </div>
-
-              {/* Email */}
-              <div className="flex gap-4">
-                <div className="shrink-0 mt-1">
-                  <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-navy mb-1">Email</p>
-                  {/* PLACEHOLDER_EMAIL */}
-                  <a
-                    href="mailto:contacto@persys.com.ar"
-                    className="text-sm text-accent hover:underline"
-                  >
-                    contacto@persys.com.ar
-                  </a>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
       </main>
-
-      {/* Footer */}
-      <footer className="bg-navy text-white">
-        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="text-lg font-bold tracking-tight">Persys</span>
-          <p className="text-sm text-white/60">
-            © {new Date().getFullYear()} Persys. Todos los derechos reservados.
-          </p>
-        </div>
-      </footer>
-    </>
+      <SiteFooter />
+    </div>
   );
 }
