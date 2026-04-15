@@ -46,7 +46,7 @@ export default async function AdminDashboardPage() {
   );
 
   return (
-    <AdminShell title="Dashboard" eyebrow={runtimeMode}>
+    <AdminShell title="Dashboard">
       {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
