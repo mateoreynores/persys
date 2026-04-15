@@ -47,12 +47,11 @@ export function ProductCard({ product }: { product: StoreProduct }) {
       </div>
 
       <CardContent className="flex flex-1 flex-col gap-2 p-4">
-        {/* Brand + SKU */}
-        <div className="flex items-center justify-between gap-2">
+        {/* Brand */}
+        <div className="flex items-center gap-2">
           <span className="text-[11px] font-medium uppercase tracking-widest text-primary/70">
             {product.brand}
           </span>
-          <span className="text-[10px] tabular-nums text-muted-foreground/60">{product.sku}</span>
         </div>
 
         {/* Name */}
@@ -94,7 +93,6 @@ export function ProductCard({ product }: { product: StoreProduct }) {
         <AddToCartButton
           productId={product.id}
           name={product.name}
-          sku={product.sku}
           brand={product.brand}
           imageUrl={product.imageUrl}
           unitPriceCents={product.priceCents}

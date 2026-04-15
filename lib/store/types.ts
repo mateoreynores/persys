@@ -38,7 +38,6 @@ export type StoreProduct = {
   categoryName: string;
   name: string;
   slug: string;
-  sku: string;
   brand: string;
   description: string;
   imageUrl: string;

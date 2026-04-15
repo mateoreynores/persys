@@ -11,7 +11,6 @@ import { useCart } from "@/hooks/use-cart";
 export function AddToCartButton(props: {
   productId: string;
   name: string;
-  sku: string;
   brand: string;
   imageUrl: string;
   unitPriceCents: number;

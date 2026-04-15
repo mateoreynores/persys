@@ -92,7 +92,7 @@ export default async function OrderConfirmationPage({
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium">{item.productSnapshotName}</p>
                       <p className="text-[11px] text-muted-foreground">
-                        {item.productSnapshotSku} &middot; x{item.quantity}
+                        {item.productSnapshotSku ? `${item.productSnapshotSku} · ` : ""}x{item.quantity}
                       </p>
                     </div>
                     <p className="shrink-0 text-sm tabular-nums">

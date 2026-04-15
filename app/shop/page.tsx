@@ -92,7 +92,7 @@ export default async function ShopPage({
                       id="q"
                       name="q"
                       defaultValue={query}
-                      placeholder="Nombre, marca o SKU"
+                      placeholder="Nombre o marca"
                       className="pl-8 text-sm"
                     />
                   </div>

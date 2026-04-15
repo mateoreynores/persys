@@ -30,9 +30,14 @@ function getNumberValue(formData: FormData, key: string) {
   return Number.isFinite(value) ? value : 0;
 }
 
+function revalidateCatalog() {
+  revalidatePath("/admin");
+  revalidatePath("/admin/catalog");
+  revalidatePath("/shop");
+}
+
 export async function saveCategoryAction(formData: FormData) {
   const session = await requireAdminUser();
-  const returnTo = getOptionalString(formData, "returnTo") || "/admin/catalog";
 
   const category = await upsertCategory({
     id: getOptionalString(formData, "id") || undefined,
@@ -52,22 +57,17 @@ export async function saveCategoryAction(formData: FormData) {
     });
   }
 
-  revalidatePath("/admin");
-  revalidatePath("/admin/catalog");
-  revalidatePath("/shop");
-  redirect(returnTo);
+  revalidateCatalog();
 }
 
 export async function saveProductAction(formData: FormData) {
   const session = await requireAdminUser();
-  const returnTo = getOptionalString(formData, "returnTo") || "/admin/catalog";
   const salePriceInput = getOptionalString(formData, "salePrice");
 
   const product = await upsertProduct({
     id: getOptionalString(formData, "id") || undefined,
     categoryId: getRequiredString(formData, "categoryId"),
     name: getRequiredString(formData, "name"),
-    sku: getRequiredString(formData, "sku"),
     brand: getRequiredString(formData, "brand"),
     description: getRequiredString(formData, "description"),
     imageUrl: getRequiredString(formData, "imageUrl"),
@@ -85,14 +85,11 @@ export async function saveProductAction(formData: FormData) {
       action: "save_product",
       entityType: "product",
       entityId: product.id,
-      payload: { name: product.name, sku: product.sku },
+      payload: { name: product.name },
     });
   }
 
-  revalidatePath("/admin");
-  revalidatePath("/admin/catalog");
-  revalidatePath("/shop");
-  redirect(returnTo);
+  revalidateCatalog();
 }
 
 export async function updateOrderStatusAction(formData: FormData) {

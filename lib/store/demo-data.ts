@@ -44,7 +44,6 @@ export const demoProducts: StoreProduct[] = [
     categoryName: "Almacén",
     name: "Aceite de girasol 900 ml",
     slug: "aceite-de-girasol-900-ml",
-    sku: "PERS-ACE-900",
     brand: "Cocina Sur",
     description: "Caja mayorista x 12 unidades. Ideal para reposición semanal.",
     imageUrl:
@@ -63,7 +62,6 @@ export const demoProducts: StoreProduct[] = [
     categoryName: "Almacén",
     name: "Fideos spaghetti 500 g",
     slug: "fideos-spaghetti-500-g",
-    sku: "PERS-FID-500",
     brand: "Molino Río",
     description: "Pack mayorista x 24 unidades para góndola seca.",
     imageUrl:
@@ -82,7 +80,6 @@ export const demoProducts: StoreProduct[] = [
     categoryName: "Bebidas",
     name: "Gaseosa cola 2.25 L",
     slug: "gaseosa-cola-2-25-l",
-    sku: "PERS-GAS-225",
     brand: "Brío",
     description: "Fardo x 6 botellas PET para alta rotación.",
     imageUrl:
@@ -101,7 +98,6 @@ export const demoProducts: StoreProduct[] = [
     categoryName: "Bebidas",
     name: "Agua mineral 1.5 L",
     slug: "agua-mineral-1-5-l",
-    sku: "PERS-AGUA-15",
     brand: "Aqua Norte",
     description: "Pack x 6 unidades, exhibición refrigerada o góndola.",
     imageUrl:
@@ -120,7 +116,6 @@ export const demoProducts: StoreProduct[] = [
     categoryName: "Limpieza e higiene",
     name: "Lavandina 1 L",
     slug: "lavandina-1-l",
-    sku: "PERS-LAV-1L",
     brand: "Blanca Total",
     description: "Caja mayorista x 12 unidades para limpieza hogar y comercio.",
     imageUrl:
@@ -139,7 +134,6 @@ export const demoProducts: StoreProduct[] = [
     categoryName: "Limpieza e higiene",
     name: "Papel higiénico x 4",
     slug: "papel-higienico-x-4",
-    sku: "PERS-PAP-4",
     brand: "Casa Clara",
     description: "Bulto x 10 packs, alta rotación y margen estable.",
     imageUrl:
@@ -158,7 +152,6 @@ export const demoProducts: StoreProduct[] = [
     categoryName: "Snacks",
     name: "Papas fritas clásicas 140 g",
     slug: "papas-fritas-clasicas-140-g",
-    sku: "PERS-PAPAS-140",
     brand: "Crunch Club",
     description: "Caja x 18 unidades para exhibición en puntera o caja.",
     imageUrl:
@@ -177,7 +170,6 @@ export const demoProducts: StoreProduct[] = [
     categoryName: "Snacks",
     name: "Caramelos surtidos 800 g",
     slug: "caramelos-surtidos-800-g",
-    sku: "PERS-CARA-800",
     brand: "Dulce Día",
     description: "Bolsa institucional para recarga de exhibidores.",
     imageUrl:

@@ -5,7 +5,6 @@ import { createContext, useEffect, useState, useSyncExternalStore } from "react"
 type CartItem = {
   productId: string;
   name: string;
-  sku: string;
   brand: string;
   imageUrl: string;
   unitPriceCents: number;

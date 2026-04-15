@@ -43,7 +43,6 @@ function mapProductRow(
     categoryName: category?.name ?? "Sin categoría",
     name: row.name,
     slug: row.slug,
-    sku: row.sku,
     brand: row.brand,
     description: row.description,
     imageUrl: row.imageUrl,
@@ -121,7 +120,6 @@ function buildCatalogSnapshot(
         product.name,
         product.brand,
         product.description,
-        product.sku,
         product.categoryName,
       ].some((value) => value.toLowerCase().includes(trimmedQuery));
     }),
@@ -268,7 +266,6 @@ function buildWhatsAppMessage(order: {
   notes?: string | null;
   items: Array<{
     name: string;
-    sku: string;
     quantity: number;
     total: number;
   }>;
@@ -293,7 +290,7 @@ function buildWhatsAppMessage(order: {
 
   for (const item of order.items) {
     lines.push(
-      `- ${item.name} (${item.sku}) x${item.quantity} · ${new Intl.NumberFormat("es-AR", {
+      `- ${item.name} x${item.quantity} · ${new Intl.NumberFormat("es-AR", {
         style: "currency",
         currency: "ARS",
         maximumFractionDigits: 0,
@@ -343,7 +340,7 @@ export async function createOrder(rawInput: CheckoutInput) {
       orderId: "",
       productId: product.id,
       productSnapshotName: product.name,
-      productSnapshotSku: product.sku,
+      productSnapshotSku: "",
       unitPriceCents,
       saleUnitPriceCents: product.salePriceCents,
       quantity: line.quantity,
@@ -368,7 +365,6 @@ export async function createOrder(rawInput: CheckoutInput) {
     notes: input.notes,
     items: items.map((item) => ({
       name: item.productSnapshotName,
-      sku: item.productSnapshotSku,
       quantity: item.quantity,
       total: item.lineTotalCents,
     })),
@@ -487,7 +483,6 @@ export async function upsertProduct(input: {
   id?: string;
   categoryId: string;
   name: string;
-  sku: string;
   brand: string;
   description: string;
   imageUrl: string;
@@ -510,7 +505,6 @@ export async function upsertProduct(input: {
     categoryId: input.categoryId,
     name,
     slug: slugify(name),
-    sku: input.sku.trim().toUpperCase(),
     brand: input.brand.trim(),
     description: input.description.trim(),
     imageUrl: input.imageUrl.trim(),

@@ -8,6 +8,13 @@
       "when": 1776092489889,
       "tag": "0000_fair_wallow",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776178889889,
+      "tag": "0001_remove_product_sku",
+      "breakpoints": true
     }
   ]
 }

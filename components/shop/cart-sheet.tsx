@@ -121,7 +121,7 @@ export function CartSheet() {
                           <div className="min-w-0">
                             <p className="truncate text-sm font-medium leading-tight">{item.name}</p>
                             <p className="text-[11px] text-muted-foreground">
-                              {item.brand} &middot; {item.sku}
+                              {item.brand}
                             </p>
                           </div>
                           <Button
