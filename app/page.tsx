@@ -1,12 +1,18 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Building2, ChartNoAxesColumn, MessageCircleMore, Store } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowRight01Icon,
+  Store01Icon,
+  WhatsappBusinessIcon,
+  Analytics01Icon,
+  Image01Icon,
+} from "@hugeicons/core-free-icons";
 
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { getFeaturedLandingProducts, getRuntimeModeLabel } from "@/lib/store/repository";
 import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -20,170 +26,165 @@ export default async function Home() {
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <main className="flex-1">
-        <section className="hero-grid overflow-hidden">
-          <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-24">
-            <div className="space-y-8">
-              <Badge variant="secondary" className="rounded-full px-4 py-1 text-xs uppercase">
-                {runtimeMode} · shop B2B + admin
-              </Badge>
-              <div className="space-y-6">
-                <h1 className="max-w-4xl text-5xl font-semibold text-balance sm:text-6xl lg:text-7xl">
-                  Distribución mayorista con pedido listo para WhatsApp y control interno.
-                </h1>
-                <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
-                  Persys ahora combina landing, catálogo comercial, carrito editable y un panel para
-                  gestionar productos, descuentos de oferta y pedidos sin sumar complejidad de pago.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <Link href="/shop" className={cn(buttonVariants({ variant: "default", size: "lg" }))}>
-                  Ir al catálogo
-                  <ArrowRight />
+
+      <main>
+        {/* Hero */}
+        <section className="relative overflow-hidden">
+          <div className="hero-grid absolute inset-0 opacity-40" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/70 to-background" />
+
+          <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pb-28 lg:pt-28">
+            <div className="mx-auto max-w-2xl text-center">
+              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                {runtimeMode} &middot; Catálogo + Admin
+              </p>
+
+              <h1 className="mt-4 text-3xl font-semibold leading-[1.15] text-balance sm:text-4xl lg:text-5xl">
+                Pedidos mayoristas, directo a WhatsApp.
+              </h1>
+
+              <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base">
+                Catálogo B2B con carrito persistente. Tus clientes arman el pedido,
+                vos lo confirmás por WhatsApp. Sin pagos online.
+              </p>
+
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+                <Link href="/shop" className={cn(buttonVariants({ size: "lg" }), "gap-1.5")}>
+                  Ver catálogo
+                  <HugeiconsIcon icon={ArrowRight01Icon} size={16} strokeWidth={2} />
                 </Link>
                 <Link href="/admin" className={cn(buttonVariants({ variant: "outline", size: "lg" }))}>
-                  Abrir panel
+                  Panel admin
                 </Link>
               </div>
-              <div className="grid gap-4 sm:grid-cols-3">
-                {[
-                  { value: "+2.000", label: "productos listos para operar" },
-                  { value: "B2B", label: "checkout enfocado en compras mayoristas" },
-                  { value: "WA", label: "confirmación comercial desde WhatsApp" },
-                ].map((item) => (
-                  <div key={item.label} className="surface-panel p-5">
-                    <p className="text-2xl font-semibold">{item.value}</p>
-                    <p className="mt-2 text-sm text-muted-foreground">{item.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="surface-panel relative overflow-hidden p-6 sm:p-8">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(69,96,198,0.14),_transparent_32%)]" />
-              <div className="relative space-y-5">
-                <div className="flex items-center justify-between">
-                  <Badge>Operación conectada</Badge>
-                  <span className="text-xs text-muted-foreground">Sin pasarela de pago</span>
-                </div>
-                <div className="space-y-4">
-                  {[
-                    {
-                      icon: Store,
-                      title: "Shop comercial",
-                      text: "Catálogo filtrable con precios visibles, destacados y carrito persistente.",
-                    },
-                    {
-                      icon: MessageCircleMore,
-                      title: "Checkout híbrido",
-                      text: "La orden se registra y luego continúa por WhatsApp con el resumen listo.",
-                    },
-                    {
-                      icon: ChartNoAxesColumn,
-                      title: "Panel operativo",
-                      text: "Pedidos y catálogo administrados desde una sola interfaz protegida.",
-                    },
-                  ].map((item) => (
-                    <Card key={item.title} className="rounded-[1.5rem] border-border/60 bg-background/85">
-                      <CardContent className="flex gap-4 p-5">
-                        <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                          <item.icon className="size-5" />
-                        </div>
-                        <div>
-                          <p className="font-semibold">{item.title}</p>
-                          <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.text}</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </section>
 
+        {/* How it works */}
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mb-10 flex items-end justify-between gap-6">
-            <div>
-              <Badge variant="secondary">Muestras del catálogo</Badge>
-              <h2 className="mt-4 text-3xl font-semibold">Productos destacados listos para vender</h2>
-            </div>
-            <Link href="/shop" className={cn(buttonVariants({ variant: "outline" }), "hidden sm:inline-flex")}>
-              Ver catálogo completo
-            </Link>
-          </div>
+          <h2 className="text-lg font-medium text-muted-foreground">Cómo funciona</h2>
 
-          <div className="grid gap-6 lg:grid-cols-3">
-            {featuredProducts.map((product) => (
-              <Card key={product.id} className="rounded-[2rem] overflow-hidden">
-                <div className="relative h-52 w-full">
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    fill
-                    unoptimized
-                    className="object-cover"
-                  />
-                </div>
-                <CardContent className="space-y-4 p-6">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-primary/70">{product.categoryName}</p>
-                    <CardTitle className="mt-2 text-xl">{product.name}</CardTitle>
-                    <p className="mt-3 text-sm leading-6 text-muted-foreground">{product.description}</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      {product.salePriceCents ? (
-                        <p className="text-sm text-muted-foreground line-through">
-                          {formatCurrency(product.priceCents)}
-                        </p>
-                      ) : null}
-                      <p className="text-2xl font-semibold">
-                        {formatCurrency(product.salePriceCents ?? product.priceCents)}
-                      </p>
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {([
+              {
+                icon: Store01Icon,
+                title: "Tu cliente navega el catálogo",
+                text: "Filtros por categoría, precios visibles, ofertas activas y carrito que se mantiene entre visitas.",
+              },
+              {
+                icon: WhatsappBusinessIcon,
+                title: "Deja su pedido con datos comerciales",
+                text: "Empresa, CUIT, contacto y notas. La orden queda registrada en tu panel al instante.",
+              },
+              {
+                icon: Analytics01Icon,
+                title: "Confirmás por WhatsApp",
+                text: "Un mensaje armado con el detalle del pedido. Coordinás disponibilidad y entrega directo.",
+              },
+            ] as const).map((item, index) => (
+              <Card key={item.title} className="relative overflow-hidden">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-muted">
+                      <HugeiconsIcon icon={item.icon} size={16} strokeWidth={2} className="text-muted-foreground" />
                     </div>
-                    <Link href="/shop" className={cn(buttonVariants({ variant: "default" }))}>
-                      Comprar
-                    </Link>
+                    <span className="text-[11px] font-medium tabular-nums text-muted-foreground/60">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
                   </div>
+                  <h3 className="mt-3 text-sm font-medium">{item.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
-          <div className="grid gap-6 lg:grid-cols-3">
-            {[
-              {
-                icon: Building2,
-                title: "Pensado para compras B2B",
-                text: "Empresa, contacto, CUIT, ciudad de entrega y notas quedan asociados al pedido.",
-              },
-              {
-                icon: MessageCircleMore,
-                title: "WhatsApp como último paso",
-                text: "El cliente no paga online: confirma comercialmente por mensaje, con el pedido ya registrado.",
-              },
-              {
-                icon: ChartNoAxesColumn,
-                title: "Gestión comercial interna",
-                text: "Pedidos con estados, descuentos por oferta y catálogo editable desde admin.",
-              },
-            ].map((item) => (
-              <Card key={item.title} className="rounded-[2rem]">
-                <CardContent className="space-y-4 p-6">
-                  <div className="flex size-12 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
-                    <item.icon className="size-5" />
+        {/* Featured products */}
+        {featuredProducts.length > 0 && (
+          <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="flex items-end justify-between gap-4">
+              <h2 className="text-lg font-medium">Productos destacados</h2>
+              <Link
+                href="/shop"
+                className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "hidden gap-1 text-muted-foreground sm:inline-flex")}
+              >
+                Ver todos
+                <HugeiconsIcon icon={ArrowRight01Icon} size={13} strokeWidth={2} />
+              </Link>
+            </div>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredProducts.map((product) => (
+                <Card key={product.id} className="group overflow-hidden py-0">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-muted/40">
+                    {product.imageUrl ? (
+                      <Image
+                        src={product.imageUrl}
+                        alt={product.name}
+                        fill
+                        unoptimized
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="image-placeholder h-full w-full">
+                        <HugeiconsIcon icon={Image01Icon} size={36} strokeWidth={1.2} />
+                      </div>
+                    )}
                   </div>
-                  <h3 className="text-xl font-semibold">{item.title}</h3>
-                  <p className="text-sm leading-6 text-muted-foreground">{item.text}</p>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-4">
+                    <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
+                      {product.categoryName}
+                    </p>
+                    <h3 className="mt-1.5 text-sm font-medium leading-snug">{product.name}</h3>
+                    {product.description && (
+                      <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                        {product.description}
+                      </p>
+                    )}
+                    <div className="mt-3 flex items-end justify-between border-t border-border/30 pt-3">
+                      <div>
+                        {product.salePriceCents && (
+                          <p className="text-[11px] tabular-nums text-muted-foreground line-through">
+                            {formatCurrency(product.priceCents)}
+                          </p>
+                        )}
+                        <p className="font-heading text-lg font-semibold tabular-nums">
+                          {formatCurrency(product.salePriceCents ?? product.priceCents)}
+                        </p>
+                      </div>
+                      <Link href="/shop" className={cn(buttonVariants({ size: "sm" }), "gap-1")}>
+                        Comprar
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Bottom CTA */}
+        <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-border/50 bg-muted/30 px-6 py-10 text-center sm:px-12">
+            <h2 className="text-xl font-semibold sm:text-2xl">Empezá a operar hoy</h2>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+              Cargá tu catálogo, configurá el número de WhatsApp y compartí el link con tus clientes.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <Link href="/shop" className={cn(buttonVariants({ size: "lg" }), "gap-1.5")}>
+                Ver catálogo
+                <HugeiconsIcon icon={ArrowRight01Icon} size={16} strokeWidth={2} />
+              </Link>
+              <Link href="/admin" className={cn(buttonVariants({ variant: "outline", size: "lg" }))}>
+                Ir al panel
+              </Link>
+            </div>
           </div>
         </section>
       </main>
+
       <SiteFooter />
     </div>
   );

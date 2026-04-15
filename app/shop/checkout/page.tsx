@@ -1,3 +1,7 @@
+import Link from "next/link";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowLeft01Icon } from "@hugeicons/core-free-icons";
+
 import { CheckoutClient } from "@/components/shop/checkout-client";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
@@ -7,16 +11,24 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen">
       <SiteHeader cartSlot={<CartSheet />} compact />
-      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mb-8 max-w-3xl">
-          <h1 className="text-4xl font-semibold">Checkout comercial</h1>
-          <p className="mt-3 text-base leading-7 text-muted-foreground">
-            Registramos el pedido con los datos de tu empresa y luego te enviamos al canal de
-            WhatsApp para la confirmación final.
+
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-5">
+          <Link
+            href="/shop"
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={12} strokeWidth={2} />
+            Catálogo
+          </Link>
+          <h1 className="mt-2 text-xl font-semibold sm:text-2xl">Checkout</h1>
+          <p className="mt-1 max-w-lg text-sm text-muted-foreground">
+            Completá los datos de tu empresa. El pedido se registra y sigue por WhatsApp.
           </p>
         </div>
         <CheckoutClient />
       </main>
+
       <SiteFooter />
     </div>
   );

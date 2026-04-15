@@ -1,5 +1,12 @@
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Package01Icon,
+  ShoppingCart01Icon,
+  Analytics01Icon,
+  CheckmarkCircle01Icon,
+} from "@hugeicons/core-free-icons";
+
 import { AdminShell } from "@/components/admin/admin-shell";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/format";
 import { getDashboardStats, getRuntimeModeLabel } from "@/lib/store/repository";
@@ -10,46 +17,96 @@ export default async function AdminDashboardPage() {
     Promise.resolve(getRuntimeModeLabel()),
   ]);
 
+  const statCards = [
+    {
+      label: "Productos activos",
+      value: stats.activeProducts.toString(),
+      icon: Package01Icon,
+    },
+    {
+      label: "Categorías",
+      value: stats.activeCategories.toString(),
+      icon: CheckmarkCircle01Icon,
+    },
+    {
+      label: "Pedidos pendientes",
+      value: stats.pendingOrders.toString(),
+      icon: ShoppingCart01Icon,
+    },
+    {
+      label: "Volumen gestionado",
+      value: formatCurrency(stats.revenueCents),
+      icon: Analytics01Icon,
+    },
+  ];
+
   return (
-    <AdminShell title="Dashboard comercial" eyebrow={`Panel administrativo · ${runtimeMode}`}>
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {[
-          { label: "Productos activos", value: stats.activeProducts.toString() },
-          { label: "Categorías activas", value: stats.activeCategories.toString() },
-          { label: "Pedidos pendientes", value: stats.pendingOrders.toString() },
-          { label: "Volumen gestionado", value: formatCurrency(stats.revenueCents) },
-        ].map((item) => (
-          <Card key={item.label} className="rounded-[2rem]">
-            <CardContent className="space-y-3 p-6">
-              <Badge variant="secondary">{item.label}</Badge>
-              <p className="text-4xl font-semibold">{item.value}</p>
+    <AdminShell title="Dashboard" eyebrow={runtimeMode}>
+      {/* Stats */}
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {statCards.map((item) => (
+          <Card key={item.label} size="sm">
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
+                <HugeiconsIcon icon={item.icon} size={16} strokeWidth={2} className="text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground">{item.label}</p>
+                <p className="font-heading text-lg font-semibold tabular-nums">{item.value}</p>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <Card className="rounded-[2rem]">
+      {/* Info */}
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <Card>
           <CardHeader>
-            <CardTitle>Cómo opera este flujo</CardTitle>
+            <CardTitle className="text-sm">Flujo del pedido</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm leading-7 text-muted-foreground">
-            <p>1. El cliente navega el catálogo, arma el carrito y deja sus datos comerciales.</p>
-            <p>2. El checkout recalcula precios y promociones desde servidor.</p>
-            <p>3. El pedido se guarda con estado `pending_whatsapp`.</p>
-            <p>4. El cliente confirma la conversación comercial desde WhatsApp.</p>
+          <CardContent>
+            <ol className="space-y-2 text-sm leading-relaxed text-muted-foreground">
+              {[
+                "El cliente arma el carrito desde el catálogo y completa datos comerciales.",
+                "El checkout recalcula precios y registra la orden en el sistema.",
+                "El pedido queda con estado pending_whatsapp hasta confirmar.",
+                "El cliente confirma por WhatsApp con el resumen ya armado.",
+              ].map((text, index) => (
+                <li key={index} className="flex gap-2.5">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-medium tabular-nums text-muted-foreground">
+                    {index + 1}
+                  </span>
+                  {text}
+                </li>
+              ))}
+            </ol>
           </CardContent>
         </Card>
 
-        <Card className="rounded-[2rem]">
+        <Card>
           <CardHeader>
-            <CardTitle>Incluido en v1</CardTitle>
+            <CardTitle className="text-sm">Incluido en v1</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm leading-7 text-muted-foreground">
-            <p>Catálogo editable con ofertas por producto.</p>
-            <p>Checkout invitado orientado a compra mayorista.</p>
-            <p>Sin pagos online, sin stock decremental y sin pricing por cliente.</p>
-            <p>Protección del panel administrativo mediante Clerk.</p>
+          <CardContent>
+            <ul className="space-y-1.5 text-sm leading-relaxed text-muted-foreground">
+              {[
+                "Catálogo editable con ofertas por producto.",
+                "Checkout invitado orientado a compra mayorista.",
+                "Sin pagos online, sin stock decremental.",
+                "Panel protegido por Clerk.",
+              ].map((text) => (
+                <li key={text} className="flex items-start gap-2">
+                  <HugeiconsIcon
+                    icon={CheckmarkCircle01Icon}
+                    size={14}
+                    strokeWidth={2}
+                    className="mt-0.5 shrink-0 text-primary-foreground"
+                  />
+                  {text}
+                </li>
+              ))}
+            </ul>
           </CardContent>
         </Card>
       </div>

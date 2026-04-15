@@ -1,61 +1,96 @@
 import Image from "next/image";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { DiscountTag01Icon, Image01Icon } from "@hugeicons/core-free-icons";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { AddToCartButton } from "@/components/shop/add-to-cart-button";
 import { formatCurrency } from "@/lib/format";
 import type { StoreProduct } from "@/lib/store/types";
 
 export function ProductCard({ product }: { product: StoreProduct }) {
+  const hasImage = Boolean(product.imageUrl);
+  const hasSale = Boolean(product.salePriceCents);
+
   return (
-    <Card className="h-full rounded-[2rem] border-border/70 bg-card/90 shadow-lg shadow-black/5">
-      <div className="relative h-52 overflow-hidden rounded-t-[2rem]">
-        <Image
-          src={product.imageUrl}
-          alt={product.name}
-          fill
-          unoptimized
-          className="object-cover"
-        />
-        <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/65 via-black/10 to-transparent p-4">
-          <Badge variant="secondary">{product.categoryName}</Badge>
-          {product.salePriceCents ? <Badge>Oferta</Badge> : null}
-        </div>
+    <Card className="group/card flex h-full flex-col overflow-hidden py-0 transition-shadow duration-300 hover:shadow-md hover:shadow-black/[0.04]">
+      {/* Image / placeholder */}
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted/40">
+        {hasImage ? (
+          <Image
+            src={product.imageUrl}
+            alt={product.name}
+            fill
+            unoptimized
+            className="object-cover transition-transform duration-500 will-change-transform group-hover/card:scale-[1.03]"
+          />
+        ) : (
+          <div className="image-placeholder h-full w-full">
+            <HugeiconsIcon icon={Image01Icon} size={40} strokeWidth={1.2} />
+          </div>
+        )}
+
+        {/* Badges */}
+        {(hasSale || product.categoryName) && (
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/40 to-transparent p-3 pt-8">
+            <span className="text-[11px] font-medium text-white/90">
+              {product.categoryName}
+            </span>
+            {hasSale && (
+              <Badge className="gap-1 text-[10px]">
+                <HugeiconsIcon icon={DiscountTag01Icon} size={11} strokeWidth={2} />
+                Oferta
+              </Badge>
+            )}
+          </div>
+        )}
       </div>
 
-      <CardHeader>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs tracking-[0.2em] text-primary/70 uppercase">{product.brand}</p>
-            <CardTitle className="mt-1 text-lg">{product.name}</CardTitle>
-          </div>
-          <p className="text-xs text-muted-foreground">{product.sku}</p>
+      <CardContent className="flex flex-1 flex-col gap-2 p-4">
+        {/* Brand + SKU */}
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] font-medium uppercase tracking-widest text-primary/70">
+            {product.brand}
+          </span>
+          <span className="text-[10px] tabular-nums text-muted-foreground/60">{product.sku}</span>
         </div>
-      </CardHeader>
 
-      <CardContent className="space-y-4">
-        <p className="text-sm leading-6 text-muted-foreground">{product.description}</p>
-        {product.availabilityNote ? (
-          <div className="rounded-2xl bg-accent/40 px-3 py-2 text-xs text-foreground">
+        {/* Name */}
+        <h3 className="text-sm font-medium leading-snug">{product.name}</h3>
+
+        {/* Description */}
+        {product.description && (
+          <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+            {product.description}
+          </p>
+        )}
+
+        {/* Availability */}
+        {product.availabilityNote && (
+          <div className="rounded-md bg-primary/[0.05] px-2.5 py-1.5 text-[11px] leading-snug text-foreground/70">
             {product.availabilityNote}
           </div>
-        ) : null}
-        <div className="flex items-end justify-between gap-4">
+        )}
+
+        <div className="mt-auto" />
+
+        {/* Pricing */}
+        <div className="flex items-end justify-between gap-3 border-t border-border/30 pt-3">
           <div>
-            {product.salePriceCents ? (
-              <p className="text-sm text-muted-foreground line-through">
+            {hasSale && (
+              <p className="text-[11px] tabular-nums text-muted-foreground line-through">
                 {formatCurrency(product.priceCents)}
               </p>
-            ) : null}
-            <p className="font-heading text-3xl font-semibold text-foreground">
+            )}
+            <p className="font-heading text-xl font-semibold tabular-nums leading-none">
               {formatCurrency(product.salePriceCents ?? product.priceCents)}
             </p>
           </div>
-          <p className="text-xs text-muted-foreground">precio por pack mayorista</p>
+          <p className="pb-0.5 text-[10px] text-muted-foreground">por pack</p>
         </div>
       </CardContent>
 
-      <CardFooter className="bg-transparent p-4 pt-0">
+      <CardFooter className="p-4 pt-0">
         <AddToCartButton
           productId={product.id}
           name={product.name}

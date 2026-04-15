@@ -1,14 +1,30 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+  WhatsappBusinessIcon,
+  Building02Icon,
+  Clock01Icon,
+} from "@hugeicons/core-free-icons";
 
 import { AdminShell } from "@/components/admin/admin-shell";
 import { updateOrderStatusAction } from "@/app/admin/actions";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, formatDateTime } from "@/lib/format";
 import { getOrderById } from "@/lib/store/repository";
 import { orderStatusValues } from "@/db/schema";
 import { cn } from "@/lib/utils";
+
+const statusLabels: Record<string, string> = {
+  pending_whatsapp: "Pendiente WA",
+  submitted: "Enviado",
+  confirmed: "Confirmado",
+  fulfilled: "Cumplido",
+  cancelled: "Cancelado",
+};
 
 export default async function AdminOrderDetailPage({
   params,
@@ -23,117 +39,150 @@ export default async function AdminOrderDetailPage({
   }
 
   return (
-    <AdminShell title={`Pedido ${order.orderNumber}`}>
-      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        <Card className="rounded-[2rem]">
+    <AdminShell title={order.orderNumber}>
+      <Link
+        href="/admin/orders"
+        className="mb-4 inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <HugeiconsIcon icon={ArrowLeft01Icon} size={12} strokeWidth={2} />
+        Pedidos
+      </Link>
+
+      <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+        {/* Order items */}
+        <Card>
           <CardHeader>
-            <CardTitle>Detalle del pedido</CardTitle>
+            <CardTitle className="text-sm">Productos</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-5">
+          <CardContent className="space-y-2">
             {order.items.map((item) => (
-              <div key={item.id} className="flex items-center justify-between gap-4 rounded-3xl border border-border p-4">
-                <div>
-                  <p className="font-medium">{item.productSnapshotName}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {item.productSnapshotSku} · x{item.quantity}
+              <div
+                key={item.id}
+                className="flex items-center justify-between gap-3 rounded-lg bg-muted/30 px-3 py-2"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">{item.productSnapshotName}</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {item.productSnapshotSku} &middot; x{item.quantity}
                   </p>
                 </div>
-                <div className="text-right">
-                  {item.saleUnitPriceCents ? (
-                    <p className="text-xs text-muted-foreground line-through">
+                <div className="shrink-0 text-right">
+                  {item.saleUnitPriceCents && (
+                    <p className="text-[10px] tabular-nums text-muted-foreground line-through">
                       {formatCurrency(item.lineSubtotalCents)}
                     </p>
-                  ) : null}
-                  <p className="font-semibold">{formatCurrency(item.lineTotalCents)}</p>
+                  )}
+                  <p className="text-sm tabular-nums">{formatCurrency(item.lineTotalCents)}</p>
                 </div>
               </div>
             ))}
 
-            <div className="space-y-2 border-t border-border pt-4 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span>{formatCurrency(order.subtotalCents)}</span>
+            <div className="space-y-1.5 border-t border-border/30 pt-3 text-sm">
+              <div className="flex justify-between text-muted-foreground">
+                <span>Subtotal</span>
+                <span className="tabular-nums">{formatCurrency(order.subtotalCents)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Descuento</span>
-                <span className="text-emerald-600">
-                  -{formatCurrency(order.discountCents)}
-                </span>
-              </div>
-              <div className="flex justify-between text-base font-semibold">
+              {order.discountCents > 0 && (
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Descuento</span>
+                  <span className="tabular-nums text-emerald-600">
+                    &minus;{formatCurrency(order.discountCents)}
+                  </span>
+                </div>
+              )}
+              <div className="flex justify-between border-t border-border/30 pt-2 font-medium">
                 <span>Total</span>
-                <span>{formatCurrency(order.totalCents)}</span>
+                <span className="font-heading text-lg tabular-nums">{formatCurrency(order.totalCents)}</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="space-y-6">
-          <Card className="rounded-[2rem]">
+        {/* Right sidebar */}
+        <div className="space-y-4">
+          {/* Customer info */}
+          <Card>
             <CardHeader>
-              <CardTitle>Cliente</CardTitle>
+              <CardTitle className="flex items-center gap-1.5 text-sm">
+                <HugeiconsIcon icon={Building02Icon} size={14} strokeWidth={2} className="text-muted-foreground" />
+                Cliente
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <p>
-                <span className="font-medium">Empresa:</span> {order.customerCompany}
-              </p>
-              <p>
-                <span className="font-medium">Contacto:</span> {order.customerName}
-              </p>
-              <p>
-                <span className="font-medium">Teléfono:</span> {order.customerPhone}
-              </p>
-              <p>
-                <span className="font-medium">Email:</span> {order.customerEmail}
-              </p>
-              <p>
-                <span className="font-medium">Ciudad:</span> {order.deliveryCity}
-              </p>
-              {order.taxId ? (
-                <p>
-                  <span className="font-medium">CUIT:</span> {order.taxId}
-                </p>
-              ) : null}
-              {order.notes ? (
-                <p className="rounded-2xl bg-muted p-3 text-muted-foreground">{order.notes}</p>
-              ) : null}
+            <CardContent className="text-sm">
+              <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5">
+                <dt className="text-muted-foreground">Empresa</dt>
+                <dd className="font-medium">{order.customerCompany}</dd>
+                <dt className="text-muted-foreground">Contacto</dt>
+                <dd>{order.customerName}</dd>
+                <dt className="text-muted-foreground">Teléfono</dt>
+                <dd>{order.customerPhone}</dd>
+                <dt className="text-muted-foreground">Email</dt>
+                <dd className="truncate">{order.customerEmail}</dd>
+                <dt className="text-muted-foreground">Ciudad</dt>
+                <dd>{order.deliveryCity}</dd>
+                {order.taxId && (
+                  <>
+                    <dt className="text-muted-foreground">CUIT</dt>
+                    <dd>{order.taxId}</dd>
+                  </>
+                )}
+              </dl>
+              {order.notes && (
+                <div className="mt-3 rounded-lg bg-muted/30 p-2.5 text-xs leading-relaxed text-muted-foreground">
+                  {order.notes}
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          <Card className="rounded-[2rem]">
+          {/* Status management */}
+          <Card>
             <CardHeader>
-              <CardTitle>Estado y trazabilidad</CardTitle>
+              <CardTitle className="flex items-center gap-1.5 text-sm">
+                <HugeiconsIcon icon={Clock01Icon} size={14} strokeWidth={2} className="text-muted-foreground" />
+                Estado
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Badge>{order.status}</Badge>
-                <span className="text-sm text-muted-foreground">
-                  actualizado el {formatDateTime(order.updatedAt)}
+            <CardContent className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Badge variant={order.status === "cancelled" ? "destructive" : "secondary"}>
+                  {statusLabels[order.status] ?? order.status}
+                </Badge>
+                <span className="text-[11px] text-muted-foreground">
+                  {formatDateTime(order.updatedAt)}
                 </span>
               </div>
-              <form action={updateOrderStatusAction} className="space-y-3">
+
+              <form action={updateOrderStatusAction} className="space-y-2">
                 <input type="hidden" name="orderId" value={order.id} />
                 <input type="hidden" name="returnTo" value={`/admin/orders/${order.id}`} />
                 <select
                   name="status"
                   defaultValue={order.status}
-                  className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none"
+                  className="h-9 w-full rounded-md border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
                   {orderStatusValues.map((value) => (
                     <option key={value} value={value}>
-                      {value}
+                      {statusLabels[value] ?? value}
                     </option>
                   ))}
                 </select>
-                <button className={cn(buttonVariants({ variant: "default" }), "w-full")}>
+                <Button type="submit" className="w-full" size="sm">
                   Guardar estado
-                </button>
+                </Button>
               </form>
-              {order.whatsAppUrl ? (
-                <a href={order.whatsAppUrl} target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: "outline" }), "w-full")}>
-                  Abrir WhatsApp
+
+              {order.whatsAppUrl && (
+                <a
+                  href={order.whatsAppUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={cn(buttonVariants({ variant: "outline", size: "sm" }), "w-full gap-1.5")}
+                >
+                  <HugeiconsIcon icon={WhatsappBusinessIcon} size={14} strokeWidth={2} />
+                  WhatsApp
                 </a>
-              ) : null}
+              )}
             </CardContent>
           </Card>
         </div>

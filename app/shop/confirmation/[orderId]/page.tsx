@@ -1,9 +1,16 @@
 import Link from "next/link";
-import { MessageCircleMore, PackageCheck } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  WhatsappBusinessIcon,
+  PackageDeliveredIcon,
+  ArrowLeft01Icon,
+  CheckmarkCircle01Icon,
+  Alert01Icon,
+} from "@hugeicons/core-free-icons";
 
+import { CopyMessageButton } from "@/components/shop/copy-message-button";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,13 +30,24 @@ export default async function OrderConfirmationPage({
     return (
       <div className="min-h-screen">
         <SiteHeader compact />
-        <main className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
-          <Alert className="rounded-[2rem]">
-            <AlertTitle>No encontramos el pedido</AlertTitle>
-            <AlertDescription>
+        <main className="mx-auto flex min-h-[60vh] max-w-md items-center justify-center px-4 text-center">
+          <div className="space-y-3">
+            <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-muted/60">
+              <HugeiconsIcon
+                icon={Alert01Icon}
+                size={28}
+                strokeWidth={1.5}
+                className="text-muted-foreground/50"
+              />
+            </div>
+            <h1 className="font-heading text-lg font-medium">No encontramos el pedido</h1>
+            <p className="text-sm text-muted-foreground">
               Verificá el enlace o volvé al catálogo para generar un nuevo pedido.
-            </AlertDescription>
-          </Alert>
+            </p>
+            <Link href="/shop" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+              Ir al catálogo
+            </Link>
+          </div>
         </main>
       </div>
     );
@@ -38,68 +56,89 @@ export default async function OrderConfirmationPage({
   return (
     <div className="min-h-screen">
       <SiteHeader compact />
-      <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-          <Card className="rounded-[2rem]">
+
+      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+        {/* Success banner */}
+        <div className="mb-6 flex items-center gap-3 rounded-xl border border-emerald-200/80 bg-emerald-50/80 px-4 py-3">
+          <HugeiconsIcon icon={CheckmarkCircle01Icon} size={18} strokeWidth={2} className="shrink-0 text-emerald-600" />
+          <p className="text-sm text-emerald-900">
+            Pedido registrado. Confirmá por WhatsApp para continuar.
+          </p>
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+          {/* Order details */}
+          <Card>
             <CardHeader>
-              <Badge>Pedido registrado</Badge>
-              <CardTitle className="mt-4 text-3xl">
-                {order.orderNumber}
-              </CardTitle>
+              <div className="flex items-center justify-between gap-3">
+                <Badge variant="secondary" className="text-[10px]">Registrado</Badge>
+                <span className="text-[11px] tabular-nums text-muted-foreground">
+                  {formatDateTime(order.createdAt)}
+                </span>
+              </div>
+              <CardTitle className="mt-1 text-xl">{order.orderNumber}</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Creado el {formatDateTime(order.createdAt)} para {order.customerCompany}.
+                {order.customerCompany}
               </p>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="rounded-3xl bg-accent/40 p-4 text-sm leading-6">
-                El pedido ya está guardado en el panel. Si el botón de WhatsApp no aparece, igual
-                podés copiar el mensaje y enviarlo manualmente.
-              </div>
-
-              <div className="space-y-3">
+            <CardContent className="space-y-4">
+              {/* Line items */}
+              <div className="space-y-1.5">
                 {order.items.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="font-medium">{item.productSnapshotName}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {item.productSnapshotSku} · x{item.quantity}
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between gap-3 rounded-lg bg-muted/30 px-3 py-2"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{item.productSnapshotName}</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {item.productSnapshotSku} &middot; x{item.quantity}
                       </p>
                     </div>
-                    <p className="font-semibold">{formatCurrency(item.lineTotalCents)}</p>
+                    <p className="shrink-0 text-sm tabular-nums">
+                      {formatCurrency(item.lineTotalCents)}
+                    </p>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-2 border-t border-border pt-4 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span>{formatCurrency(order.subtotalCents)}</span>
+              {/* Totals */}
+              <div className="space-y-1.5 border-t border-border/30 pt-3 text-sm">
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Subtotal</span>
+                  <span className="tabular-nums">{formatCurrency(order.subtotalCents)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Descuento</span>
-                  <span className="text-emerald-600">
-                    -{formatCurrency(order.discountCents)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-base font-semibold">
+                {order.discountCents > 0 && (
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Descuento</span>
+                    <span className="tabular-nums text-emerald-600">
+                      &minus;{formatCurrency(order.discountCents)}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between border-t border-border/30 pt-2 font-medium">
                   <span>Total</span>
-                  <span>{formatCurrency(order.totalCents)}</span>
+                  <span className="font-heading text-lg tabular-nums">
+                    {formatCurrency(order.totalCents)}
+                  </span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <div className="space-y-6">
-            <Card className="rounded-[2rem] bg-primary text-primary-foreground">
-              <CardContent className="space-y-4 p-6">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-primary-foreground/10">
-                  <PackageCheck className="size-6" />
+          {/* Right sidebar */}
+          <div className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+            {/* Next step CTA */}
+            <Card className="border-foreground/10 bg-foreground text-background">
+              <CardContent className="space-y-4 p-5">
+                <div className="flex size-10 items-center justify-center rounded-xl bg-background/10">
+                  <HugeiconsIcon icon={PackageDeliveredIcon} size={20} strokeWidth={2} />
                 </div>
                 <div>
-                  <p className="text-xl font-semibold">Siguiente paso</p>
-                  <p className="mt-2 text-sm leading-6 text-primary-foreground/85">
-                    Confirmá este pedido con el equipo comercial por WhatsApp para coordinar
-                    disponibilidad final y entrega.
+                  <p className="font-heading text-base font-medium">Siguiente paso</p>
+                  <p className="mt-1 text-sm leading-relaxed text-background/60">
+                    Confirmá el pedido con el equipo comercial por WhatsApp para coordinar
+                    disponibilidad y entrega.
                   </p>
                 </div>
                 {order.whatsAppUrl ? (
@@ -107,32 +146,42 @@ export default async function OrderConfirmationPage({
                     href={order.whatsAppUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className={cn(buttonVariants({ variant: "secondary", size: "lg" }), "w-full")}
+                    className={cn(
+                      buttonVariants({ variant: "secondary", size: "lg" }),
+                      "w-full gap-2",
+                    )}
                   >
-                    <MessageCircleMore />
+                    <HugeiconsIcon icon={WhatsappBusinessIcon} size={18} strokeWidth={2} />
                     Abrir WhatsApp
                   </a>
                 ) : (
-                  <Alert className="bg-primary-foreground/10 text-primary-foreground">
-                    <AlertTitle>Falta `BUSINESS_WHATSAPP_NUMBER`</AlertTitle>
-                    <AlertDescription>
-                      El pedido quedó guardado, pero todavía no hay un número de WhatsApp
-                      configurado.
-                    </AlertDescription>
-                  </Alert>
+                  <div className="rounded-lg bg-background/10 p-3 text-sm">
+                    <p className="font-medium">Falta configurar WhatsApp</p>
+                    <p className="mt-1 text-xs text-background/50">
+                      El pedido quedó guardado. Configurá <code className="text-background/70">BUSINESS_WHATSAPP_NUMBER</code> para habilitar el botón.
+                    </p>
+                  </div>
                 )}
               </CardContent>
             </Card>
 
-            <Card className="rounded-[2rem]">
+            {/* Prepared message */}
+            <Card>
               <CardHeader>
-                <CardTitle>Mensaje preparado</CardTitle>
+                <div className="flex items-center justify-between gap-2">
+                  <CardTitle className="text-sm">Mensaje preparado</CardTitle>
+                  <CopyMessageButton text={order.whatsAppMessage ?? ""} />
+                </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <pre className="overflow-x-auto rounded-3xl bg-muted p-4 text-sm whitespace-pre-wrap">
+              <CardContent className="space-y-3">
+                <pre className="max-h-36 overflow-y-auto rounded-lg bg-muted/40 p-3 text-[11px] leading-relaxed text-muted-foreground whitespace-pre-wrap">
                   {order.whatsAppMessage}
                 </pre>
-                <Link href="/shop" className={cn(buttonVariants({ variant: "outline" }), "w-full")}>
+                <Link
+                  href="/shop"
+                  className={cn(buttonVariants({ variant: "outline", size: "sm" }), "w-full gap-1.5")}
+                >
+                  <HugeiconsIcon icon={ArrowLeft01Icon} size={14} strokeWidth={2} />
                   Volver al catálogo
                 </Link>
               </CardContent>
@@ -140,6 +189,7 @@ export default async function OrderConfirmationPage({
           </div>
         </div>
       </main>
+
       <SiteFooter />
     </div>
   );

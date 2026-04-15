@@ -1,7 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
+import Image from "next/image";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ShoppingCart01Icon,
+  Delete01Icon,
+  MinusSignIcon,
+  PlusSignIcon,
+  ArrowRight01Icon,
+  ShoppingBasket01Icon,
+  Image01Icon,
+} from "@hugeicons/core-free-icons";
+import { toast } from "sonner";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -25,143 +36,220 @@ export function CartSheet() {
     <Sheet>
       <SheetTrigger
         render={
-          <Button variant="outline" size="lg" className="relative">
-            <ShoppingCart />
-            Carrito
-            {cart.isHydrated && cart.itemCount > 0 ? (
-              <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs text-primary-foreground">
+          <Button variant="outline" size="sm" className="relative gap-1.5">
+            <HugeiconsIcon icon={ShoppingCart01Icon} size={15} strokeWidth={2} />
+            <span className="hidden sm:inline">Carrito</span>
+            {cart.isHydrated && cart.itemCount > 0 && (
+              <span className="flex size-5 items-center justify-center rounded-full bg-foreground text-[10px] font-medium tabular-nums text-background">
                 {cart.itemCount}
               </span>
-            ) : null}
+            )}
           </Button>
         }
       />
-      <SheetContent side="right" className="w-full max-w-xl overflow-y-auto">
+      <SheetContent side="right" className="flex w-full max-w-lg flex-col overflow-hidden">
         <SheetHeader>
-          <SheetTitle>Carrito mayorista</SheetTitle>
+          <SheetTitle className="flex items-center gap-2">
+            <HugeiconsIcon icon={ShoppingBasket01Icon} size={18} strokeWidth={2} />
+            Carrito
+            {cart.items.length > 0 && (
+              <span className="text-sm font-normal text-muted-foreground">
+                ({cart.itemCount} {cart.itemCount === 1 ? "item" : "items"})
+              </span>
+            )}
+          </SheetTitle>
           <SheetDescription>
-            Ajustá cantidades, revisá descuentos activos y dejá una nota para el pedido.
+            Revisá los productos, ajustá cantidades y continuá al checkout.
           </SheetDescription>
         </SheetHeader>
 
-        <div className="flex flex-1 flex-col gap-6 px-4 pb-4">
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 pb-2">
           {cart.items.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-border p-6 text-sm text-muted-foreground">
-              Todavía no agregaste productos.
+            <div className="flex flex-1 flex-col items-center justify-center gap-3 p-8 text-center">
+              <div className="flex size-16 items-center justify-center rounded-2xl bg-muted/60">
+                <HugeiconsIcon
+                  icon={ShoppingCart01Icon}
+                  size={28}
+                  strokeWidth={1.4}
+                  className="text-muted-foreground/50"
+                />
+              </div>
+              <div>
+                <p className="font-medium">Carrito vacío</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Explorá el catálogo para empezar.
+                </p>
+              </div>
+              <Link
+                href="/shop"
+                className={cn(buttonVariants({ variant: "outline", size: "sm" }), "mt-1 gap-1.5")}
+              >
+                Ver catálogo
+                <HugeiconsIcon icon={ArrowRight01Icon} size={14} strokeWidth={2} />
+              </Link>
             </div>
           ) : (
-            <div className="space-y-3">
-              {cart.items.map((item) => {
-                const unit = item.salePriceCents ?? item.unitPriceCents;
-
-                return (
-                  <article
-                    key={item.productId}
-                    className="rounded-3xl border border-border bg-card p-4 shadow-sm"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-sm font-semibold">{item.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {item.brand} · {item.sku}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={() => cart.removeItem(item.productId)}
-                        aria-label={`Quitar ${item.name}`}
-                      >
-                        <Trash2 />
-                      </Button>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-2 rounded-full border border-border px-2 py-1">
-                        <Button
-                          variant="ghost"
-                          size="icon-xs"
-                          onClick={() => cart.updateQuantity(item.productId, item.quantity - 1)}
-                          aria-label={`Restar ${item.name}`}
-                        >
-                          <Minus />
-                        </Button>
-                        <span className="min-w-8 text-center text-sm font-medium">
-                          {item.quantity}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="icon-xs"
-                          onClick={() => cart.updateQuantity(item.productId, item.quantity + 1)}
-                          aria-label={`Sumar ${item.name}`}
-                        >
-                          <Plus />
-                        </Button>
+            <>
+              <div className="space-y-2">
+                {cart.items.map((item) => {
+                  const unit = item.salePriceCents ?? item.unitPriceCents;
+                  const hasImage = Boolean(item.imageUrl);
+                  return (
+                    <article
+                      key={item.productId}
+                      className="flex gap-3 rounded-xl border border-border/50 bg-card p-2.5"
+                    >
+                      {/* Thumbnail */}
+                      <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-muted/40">
+                        {hasImage ? (
+                          <Image
+                            src={item.imageUrl}
+                            alt={item.name}
+                            fill
+                            unoptimized
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="image-placeholder h-full w-full">
+                            <HugeiconsIcon icon={Image01Icon} size={16} strokeWidth={1.4} />
+                          </div>
+                        )}
                       </div>
 
-                      <div className="text-right">
-                        {item.salePriceCents ? (
-                          <p className="text-xs text-muted-foreground line-through">
-                            {formatCurrency(item.unitPriceCents)}
-                          </p>
-                        ) : null}
-                        <p className="text-sm font-semibold">{formatCurrency(unit * item.quantity)}</p>
+                      <div className="flex min-w-0 flex-1 flex-col justify-between">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium leading-tight">{item.name}</p>
+                            <p className="text-[11px] text-muted-foreground">
+                              {item.brand} &middot; {item.sku}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon-xs"
+                            onClick={() => {
+                              cart.removeItem(item.productId);
+                              toast(`${item.name} eliminado del carrito`);
+                            }}
+                            aria-label={`Quitar ${item.name}`}
+                            className="shrink-0 text-muted-foreground/60 hover:text-destructive"
+                          >
+                            <HugeiconsIcon icon={Delete01Icon} size={13} strokeWidth={2} />
+                          </Button>
+                        </div>
+
+                        <div className="mt-1.5 flex items-center justify-between gap-2">
+                          <div className="inline-flex items-center rounded-md border border-border/50 bg-background">
+                            <Button
+                              variant="ghost"
+                              size="icon-xs"
+                              onClick={() =>
+                                cart.updateQuantity(item.productId, item.quantity - 1)
+                              }
+                              disabled={item.quantity <= 1}
+                              aria-label="Restar"
+                              className="disabled:opacity-30"
+                            >
+                              <HugeiconsIcon icon={MinusSignIcon} size={11} strokeWidth={2.5} />
+                            </Button>
+                            <span className="min-w-6 text-center text-xs font-medium tabular-nums">
+                              {item.quantity}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="icon-xs"
+                              onClick={() =>
+                                cart.updateQuantity(item.productId, item.quantity + 1)
+                              }
+                              disabled={item.quantity >= 999}
+                              aria-label="Sumar"
+                              className="disabled:opacity-30"
+                            >
+                              <HugeiconsIcon icon={PlusSignIcon} size={11} strokeWidth={2.5} />
+                            </Button>
+                          </div>
+
+                          <div className="text-right">
+                            {item.salePriceCents && (
+                              <p className="text-[10px] tabular-nums text-muted-foreground line-through">
+                                {formatCurrency(item.unitPriceCents * item.quantity)}
+                              </p>
+                            )}
+                            <p className="text-sm font-medium tabular-nums">
+                              {formatCurrency(unit * item.quantity)}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              {/* Notes */}
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground" htmlFor="cart-notes">
+                  Notas comerciales
+                </label>
+                <Textarea
+                  id="cart-notes"
+                  value={cart.notes}
+                  onChange={(event) => cart.setNotes(event.target.value)}
+                  placeholder="Priorizar entrega, reemplazos permitidos, horarios..."
+                  className="min-h-14 resize-none text-sm"
+                />
+              </div>
+
+              {/* Totals */}
+              <div className="rounded-xl bg-muted/40 p-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="tabular-nums">{formatCurrency(cart.subtotalCents)}</span>
+                </div>
+                {cart.discountCents > 0 && (
+                  <div className="mt-0.5 flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Ahorro por ofertas</span>
+                    <span className="tabular-nums text-emerald-600">
+                      &minus;{formatCurrency(cart.discountCents)}
+                    </span>
+                  </div>
+                )}
+                <div className="mt-2 flex items-center justify-between border-t border-border/30 pt-2 font-medium">
+                  <span>Total</span>
+                  <span className="font-heading text-lg tabular-nums">
+                    {formatCurrency(cart.totalCents)}
+                  </span>
+                </div>
+              </div>
+            </>
           )}
-
-          <div className="space-y-3">
-            <label className="text-sm font-medium" htmlFor="cart-notes">
-              Notas para el equipo comercial
-            </label>
-            <Textarea
-              id="cart-notes"
-              value={cart.notes}
-              onChange={(event) => cart.setNotes(event.target.value)}
-              placeholder="Ejemplo: priorizar entrega, reemplazos permitidos, horarios de recepción."
-            />
-          </div>
-
-          <div className="rounded-3xl border border-border bg-card p-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Subtotal</span>
-              <span>{formatCurrency(cart.subtotalCents)}</span>
-            </div>
-            <div className="mt-2 flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Descuento por promociones</span>
-              <span className="text-emerald-600">
-                -{formatCurrency(cart.discountCents)}
-              </span>
-            </div>
-            <div className="mt-3 flex items-center justify-between border-t border-border pt-3 text-base font-semibold">
-              <span>Total estimado</span>
-              <span>{formatCurrency(cart.totalCents)}</span>
-            </div>
-          </div>
         </div>
 
-        <SheetFooter>
-          <div className="grid gap-2">
-            <Link
-              href="/shop/checkout"
-              className={cn(buttonVariants({ variant: "default", size: "lg" }), "w-full")}
-            >
-              Continuar al checkout
-            </Link>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => cart.clearCart()}
-              disabled={cart.items.length === 0}
-            >
-              Vaciar carrito
-            </Button>
-          </div>
-        </SheetFooter>
+        {cart.items.length > 0 && (
+          <SheetFooter>
+            <div className="grid gap-2">
+              <Link
+                href="/shop/checkout"
+                className={cn(buttonVariants({ size: "lg" }), "w-full gap-1.5")}
+              >
+                Ir al checkout
+                <HugeiconsIcon icon={ArrowRight01Icon} size={16} strokeWidth={2} />
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const count = cart.itemCount;
+                  cart.clearCart();
+                  toast(`${count} ${count === 1 ? "producto eliminado" : "productos eliminados"}`);
+                }}
+                className="text-xs text-muted-foreground hover:text-destructive"
+              >
+                Vaciar carrito
+              </Button>
+            </div>
+          </SheetFooter>
+        )}
       </SheetContent>
     </Sheet>
   );

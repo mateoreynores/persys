@@ -1,39 +1,34 @@
 import Link from "next/link";
 
+const links = [
+  { href: "/", label: "Inicio" },
+  { href: "/shop", label: "Catálogo" },
+  { href: "/shop/checkout", label: "Checkout" },
+  { href: "/admin", label: "Admin" },
+];
+
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border/60 bg-card/70">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr] lg:px-8">
-        <div className="space-y-3">
-          <p className="text-sm font-semibold tracking-[0.24em] text-primary/70 uppercase">
-            Persys
-          </p>
-          <h2 className="font-heading text-2xl font-semibold text-balance">
-            Catálogo mayorista, toma de pedidos y gestión comercial en un solo flujo.
-          </h2>
-          <p className="max-w-xl text-sm text-muted-foreground">
-            El shop genera el pedido, lo registra para administración y deja la
-            confirmación final en WhatsApp, sin sumar complejidad de pagos.
-          </p>
+    <footer className="border-t border-border/40">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-semibold tracking-tight">Persys</span>
+          <span className="text-xs text-muted-foreground">
+            Distribución mayorista B2B
+          </span>
         </div>
 
-        <div className="space-y-2">
-          <p className="text-sm font-semibold">Explorar</p>
-          <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-            <Link href="/">Landing</Link>
-            <Link href="/shop">Shop B2B</Link>
-            <Link href="/shop/checkout">Checkout</Link>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <p className="text-sm font-semibold">Operación</p>
-          <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-            <Link href="/admin">Dashboard</Link>
-            <Link href="/admin/catalog">Catálogo</Link>
-            <Link href="/admin/orders">Pedidos</Link>
-          </div>
-        </div>
+        <nav className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </footer>
   );

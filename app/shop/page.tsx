@@ -1,11 +1,18 @@
 import Form from "next/form";
 import Link from "next/link";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Search01Icon,
+  FilterIcon,
+  Cancel01Icon,
+  ArrowRight01Icon,
+  PackageIcon,
+} from "@hugeicons/core-free-icons";
 
 import { CartSheet } from "@/components/shop/cart-sheet";
 import { ProductCard } from "@/components/shop/product-card";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,61 +38,75 @@ export default async function ShopPage({
     Promise.resolve(getRuntimeModeLabel()),
   ]);
 
+  const hasFilters = Boolean(query || category);
+
   return (
     <div className="min-h-screen">
       <SiteHeader cartSlot={<CartSheet />} compact />
 
-      <main className="mx-auto max-w-7xl space-y-10 px-4 py-10 sm:px-6 lg:px-8">
-        <section className="surface-panel overflow-hidden px-6 py-8 sm:px-8">
-          <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-            <div className="space-y-4">
-              <Badge variant="secondary">{runtimeMode}</Badge>
-              <h1 className="text-4xl font-semibold text-balance sm:text-5xl">
-                Catálogo B2B para supermercados y compras recurrentes.
-              </h1>
-              <p className="max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
-                Filtrá por categoría, revisá promociones activas y armá el carrito. El pedido se
-                persiste primero y después sigue por WhatsApp con el resumen listo.
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Page header */}
+        <div className="mb-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2.5">
+                <h1 className="text-xl font-semibold sm:text-2xl">Catálogo</h1>
+                <span className="text-[11px] text-muted-foreground">{runtimeMode}</span>
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {snapshot.activeProductCount} productos activos
               </p>
             </div>
-            <Link href="/shop/checkout" className={cn(buttonVariants({ size: "lg" }))}>
+            <Link
+              href="/shop/checkout"
+              className={cn(buttonVariants({ size: "sm" }), "hidden gap-1.5 lg:inline-flex")}
+            >
               Ir al checkout
+              <HugeiconsIcon icon={ArrowRight01Icon} size={14} strokeWidth={2} />
             </Link>
           </div>
-        </section>
+        </div>
 
-        <section className="grid gap-8 lg:grid-cols-[18rem_1fr]">
-          <aside className="surface-panel h-fit p-5">
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm font-semibold">Buscar y filtrar</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {snapshot.activeProductCount} productos activos en operación.
-                </p>
+        <div className="grid gap-6 lg:grid-cols-[15rem_1fr]">
+          {/* Sidebar filters */}
+          <aside className="h-fit">
+            <div className="surface-panel p-4">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <HugeiconsIcon icon={FilterIcon} size={14} strokeWidth={2} className="text-muted-foreground" />
+                Filtros
               </div>
 
-              <Form action="/shop" className="space-y-4">
-                <div className="space-y-2">
-                  <label htmlFor="q" className="text-sm font-medium">
+              <Form action="/shop" className="mt-3.5 space-y-3">
+                <div className="space-y-1">
+                  <label htmlFor="q" className="text-[11px] font-medium text-muted-foreground">
                     Buscar
                   </label>
-                  <Input
-                    id="q"
-                    name="q"
-                    defaultValue={query}
-                    placeholder="Nombre, marca o SKU"
-                  />
+                  <div className="relative">
+                    <HugeiconsIcon
+                      icon={Search01Icon}
+                      size={13}
+                      strokeWidth={2}
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/50"
+                    />
+                    <Input
+                      id="q"
+                      name="q"
+                      defaultValue={query}
+                      placeholder="Nombre, marca o SKU"
+                      className="pl-8 text-sm"
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="category" className="text-sm font-medium">
+                <div className="space-y-1">
+                  <label htmlFor="category" className="text-[11px] font-medium text-muted-foreground">
                     Categoría
                   </label>
                   <select
                     id="category"
                     name="category"
                     defaultValue={category}
-                    className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none"
+                    className="h-9 w-full rounded-md border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                   >
                     <option value="">Todas</option>
                     {snapshot.categories.map((item) => (
@@ -96,66 +117,86 @@ export default async function ShopPage({
                   </select>
                 </div>
 
-                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
-                  <Button type="submit" className="w-full">
-                    Aplicar filtros
+                <div className="grid gap-2 pt-0.5">
+                  <Button type="submit" size="sm" className="w-full">
+                    Aplicar
                   </Button>
-                  <Link
-                    href="/shop"
-                    className={cn(buttonVariants({ variant: "outline" }), "w-full")}
-                  >
-                    Limpiar
-                  </Link>
+                  {hasFilters && (
+                    <Link
+                      href="/shop"
+                      className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "w-full gap-1 text-xs")}
+                    >
+                      <HugeiconsIcon icon={Cancel01Icon} size={12} strokeWidth={2} />
+                      Limpiar filtros
+                    </Link>
+                  )}
                 </div>
               </Form>
-
-              <div className="rounded-3xl bg-accent/40 p-4 text-sm">
-                Las rebajas visibles ya se aplican al total final. No hay cupones ni medios de pago
-                online en esta versión.
-              </div>
             </div>
           </aside>
 
+          {/* Product grid */}
           <div className="space-y-8">
-            {snapshot.featuredProducts.length > 0 && !query && !category ? (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-2xl font-semibold">Productos destacados</h2>
-                  <Badge>Ofertas activas</Badge>
+            {/* Featured section */}
+            {snapshot.featuredProducts.length > 0 && !hasFilters && (
+              <section>
+                <div className="mb-3 flex items-center justify-between">
+                  <h2 className="text-sm font-medium">Destacados</h2>
+                  <Badge variant="secondary" className="text-[10px]">
+                    {snapshot.featuredProducts.length} oferta{snapshot.featuredProducts.length === 1 ? "" : "s"}
+                  </Badge>
                 </div>
-                <div className="grid gap-6 xl:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {snapshot.featuredProducts.map((product) => (
                     <ProductCard key={`featured-${product.id}`} product={product} />
                   ))}
                 </div>
-              </div>
-            ) : null}
+              </section>
+            )}
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="text-2xl font-semibold">Todo el catálogo</h2>
-                <span className="text-sm text-muted-foreground">
-                  {snapshot.products.length} resultado{snapshot.products.length === 1 ? "" : "s"}
+            {/* Full catalog */}
+            <section>
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-sm font-medium">
+                  {hasFilters ? "Resultados" : "Todo el catálogo"}
+                </h2>
+                <span className="text-[11px] tabular-nums text-muted-foreground">
+                  {snapshot.products.length} producto{snapshot.products.length === 1 ? "" : "s"}
                 </span>
               </div>
 
               {snapshot.products.length === 0 ? (
-                <Alert className="rounded-[2rem]">
-                  <AlertTitle>No encontramos productos con esos filtros</AlertTitle>
-                  <AlertDescription>
-                    Probá limpiar la búsqueda o cambiar de categoría para ver más resultados.
-                  </AlertDescription>
-                </Alert>
+                <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/50 bg-muted/20 py-16 text-center">
+                  <div className="flex size-14 items-center justify-center rounded-2xl bg-muted/60">
+                    <HugeiconsIcon
+                      icon={PackageIcon}
+                      size={28}
+                      strokeWidth={1.2}
+                      className="text-muted-foreground/40"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Sin resultados</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Probá limpiar la búsqueda o cambiar de categoría.
+                    </p>
+                  </div>
+                  {hasFilters && (
+                    <Link href="/shop" className={cn(buttonVariants({ variant: "outline", size: "sm" }), "mt-1")}>
+                      Limpiar filtros
+                    </Link>
+                  )}
+                </div>
               ) : (
-                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {snapshot.products.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
               )}
-            </div>
+            </section>
           </div>
-        </section>
+        </div>
       </main>
 
       <SiteFooter />

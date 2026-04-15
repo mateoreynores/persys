@@ -1,22 +1,15 @@
 import type { Metadata } from "next";
-import { Fraunces, Manrope } from "next/font/google";
+import { Fraunces, Manrope, Noto_Sans, Figtree } from "next/font/google";
 
 import { Providers } from "@/components/providers";
 import { isClerkConfigured } from "@/lib/env";
 
 import "./globals.css";
+import { cn } from "@/lib/utils";
 
-const manrope = Manrope({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-sans",
-});
+const notoSans = Noto_Sans({subsets:['latin'],variable:'--font-sans'});
 
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-heading",
-});
+const figtreeHeading = Figtree({subsets:['latin'],variable:'--font-heading'});
 
 export const metadata: Metadata = {
   title: "Persys | Catálogo B2B y administración comercial",
@@ -42,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${manrope.variable} ${fraunces.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", "font-sans", notoSans.variable, figtreeHeading.variable)}
     >
       <body className="min-h-full font-sans">
         <Providers clerkEnabled={clerkEnabled}>{children}</Providers>

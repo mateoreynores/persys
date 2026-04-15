@@ -1,4 +1,9 @@
 import Link from "next/link";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowRight01Icon,
+  SparklesIcon,
+} from "@hugeicons/core-free-icons";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -17,31 +22,26 @@ export function SiteHeader({
   compact?: boolean;
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-border/40 bg-background/85 backdrop-blur-xl backdrop-saturate-150">
       <div
         className={cn(
           "mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8",
-          compact ? "h-16" : "h-18",
+          compact ? "h-14" : "h-14",
         )}
       >
-        <Link href="/" className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
-            <span className="text-sm font-semibold">P</span>
+        <Link href="/" className="flex items-center gap-2">
+          <div className="flex size-7 items-center justify-center rounded-md bg-foreground text-background">
+            <HugeiconsIcon icon={SparklesIcon} size={12} strokeWidth={2.5} />
           </div>
-          <div>
-            <p className="text-sm font-semibold tracking-[0.24em] text-primary/70 uppercase">
-              Persys
-            </p>
-            <p className="text-sm text-muted-foreground">Mayorista B2B</p>
-          </div>
+          <span className="text-sm font-semibold tracking-tight">Persys</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-0.5 md:flex">
           {links.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-md px-3 py-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
             >
               {item.label}
             </Link>
@@ -52,9 +52,10 @@ export function SiteHeader({
           {cartSlot}
           <Link
             href="/shop/checkout"
-            className={cn(buttonVariants({ variant: "default" }), "hidden sm:inline-flex")}
+            className={cn(buttonVariants({ size: "sm" }), "hidden gap-1.5 sm:inline-flex")}
           >
             Hacer pedido
+            <HugeiconsIcon icon={ArrowRight01Icon} size={14} strokeWidth={2} />
           </Link>
         </div>
       </div>
