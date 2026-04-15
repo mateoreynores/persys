@@ -49,7 +49,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
       <CardContent className="flex flex-1 flex-col gap-2 p-4">
         {/* Brand */}
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-medium uppercase tracking-widest text-primary/70">
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
             {product.brand}
           </span>
         </div>

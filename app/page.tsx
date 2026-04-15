@@ -7,6 +7,7 @@ import {
   WhatsappBusinessIcon,
   Analytics01Icon,
   Image01Icon,
+  ShoppingCart01Icon,
 } from "@hugeicons/core-free-icons";
 
 import { SiteFooter } from "@/components/site/site-footer";
@@ -63,9 +64,10 @@ export default async function Home() {
 
         {/* How it works */}
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <h2 className="text-lg font-medium text-muted-foreground">Cómo funciona</h2>
+          <h2 className="text-lg font-medium">Cómo funciona</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Tres pasos para gestionar pedidos mayoristas.</p>
 
-          <div className="mt-5 grid gap-3 md:grid-cols-3">
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
             {([
               {
                 icon: Store01Icon,
@@ -73,12 +75,12 @@ export default async function Home() {
                 text: "Filtros por categoría, precios visibles, ofertas activas y carrito que se mantiene entre visitas.",
               },
               {
-                icon: WhatsappBusinessIcon,
+                icon: ShoppingCart01Icon,
                 title: "Deja su pedido con datos comerciales",
                 text: "Empresa, CUIT, contacto y notas. La orden queda registrada en tu panel al instante.",
               },
               {
-                icon: Analytics01Icon,
+                icon: WhatsappBusinessIcon,
                 title: "Confirmás por WhatsApp",
                 text: "Un mensaje armado con el detalle del pedido. Coordinás disponibilidad y entrega directo.",
               },
@@ -86,10 +88,10 @@ export default async function Home() {
               <Card key={item.title} className="relative overflow-hidden">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-3">
-                    <div className="flex size-8 items-center justify-center rounded-lg bg-muted">
-                      <HugeiconsIcon icon={item.icon} size={16} strokeWidth={2} className="text-muted-foreground" />
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-primary/[0.07]">
+                      <HugeiconsIcon icon={item.icon} size={16} strokeWidth={2} className="text-primary" />
                     </div>
-                    <span className="text-[11px] font-medium tabular-nums text-muted-foreground/60">
+                    <span className="text-xs font-semibold tabular-nums text-muted-foreground/50">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                   </div>
@@ -167,7 +169,7 @@ export default async function Home() {
 
         {/* Bottom CTA */}
         <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-border/50 bg-muted/30 px-6 py-10 text-center sm:px-12">
+          <div className="rounded-xl border border-border bg-muted/40 px-6 py-10 text-center sm:px-12">
             <h2 className="text-xl font-semibold sm:text-2xl">Empezá a operar hoy</h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
               Cargá tu catálogo, configurá el número de WhatsApp y compartí el link con tus clientes.

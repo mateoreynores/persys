@@ -102,7 +102,15 @@ export default async function AdminOrdersPage({
                     </TableCell>
                     <TableCell className="tabular-nums">{formatCurrency(order.totalCents)}</TableCell>
                     <TableCell>
-                      <Badge variant={order.status === "cancelled" ? "destructive" : "default"}>
+                      <Badge
+                        variant={
+                          order.status === "cancelled"
+                            ? "destructive"
+                            : order.status === "pending_whatsapp"
+                              ? "secondary"
+                              : "default"
+                        }
+                      >
                         {statusLabels[order.status] ?? order.status}
                       </Badge>
                     </TableCell>

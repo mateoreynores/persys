@@ -2,7 +2,6 @@ import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowRight01Icon,
-  SparklesIcon,
 } from "@hugeicons/core-free-icons";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -22,7 +21,7 @@ export function SiteHeader({
   compact?: boolean;
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/40 bg-background/85 backdrop-blur-xl backdrop-saturate-150">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-sm">
       <div
         className={cn(
           "mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8",
@@ -30,8 +29,8 @@ export function SiteHeader({
         )}
       >
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex size-7 items-center justify-center rounded-md bg-foreground text-background">
-            <HugeiconsIcon icon={SparklesIcon} size={12} strokeWidth={2.5} />
+          <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <span className="text-[11px] font-bold tracking-tight">P</span>
           </div>
           <span className="text-sm font-semibold tracking-tight">Persys</span>
         </Link>
@@ -41,7 +40,7 @@ export function SiteHeader({
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-md px-3 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               {item.label}
             </Link>

@@ -357,12 +357,12 @@ export function CheckoutClient() {
           </CardContent>
         </Card>
 
-        <div className="flex items-start gap-3 rounded-xl border border-primary/15 bg-primary/[0.03] p-3.5">
+        <div className="flex items-start gap-3 rounded-xl border border-primary/15 bg-primary/[0.04] p-3.5">
           <HugeiconsIcon
             icon={Shield01Icon}
             size={16}
             strokeWidth={2}
-            className="mt-0.5 shrink-0 text-primary-foreground"
+            className="mt-0.5 shrink-0 text-primary"
           />
           <div>
             <p className="text-sm font-medium">Sin pago online</p>

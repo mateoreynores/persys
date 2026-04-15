@@ -145,7 +145,15 @@ export default async function AdminOrderDetailPage({
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-2">
-                <Badge variant={order.status === "cancelled" ? "destructive" : "secondary"}>
+                <Badge
+                  variant={
+                    order.status === "cancelled"
+                      ? "destructive"
+                      : order.status === "pending_whatsapp"
+                        ? "secondary"
+                        : "default"
+                  }
+                >
                   {statusLabels[order.status] ?? order.status}
                 </Badge>
                 <span className="text-[11px] text-muted-foreground">
