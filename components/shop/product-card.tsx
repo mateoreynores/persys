@@ -6,11 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { AddToCartButton } from "@/components/shop/add-to-cart-button";
 import { formatCurrency } from "@/lib/format";
+import { normalizeMinimumQuantity } from "@/lib/store/purchase-rules";
 import type { StoreProduct } from "@/lib/store/types";
 
 export function ProductCard({ product }: { product: StoreProduct }) {
   const hasImage = Boolean(product.imageUrl);
   const hasSale = Boolean(product.salePriceCents);
+  const minimumQuantity = normalizeMinimumQuantity(product.minimumQuantity);
 
   return (
     <Card className="group/card flex h-full flex-col overflow-hidden py-0 transition-shadow duration-300 hover:shadow-md hover:shadow-black/[0.04]">
@@ -70,6 +72,11 @@ export function ProductCard({ product }: { product: StoreProduct }) {
             {product.availabilityNote}
           </div>
         )}
+        {minimumQuantity && (
+          <div className="rounded-md bg-amber-500/10 px-2.5 py-1.5 text-[11px] leading-snug text-amber-900/80">
+            Compra minima: {minimumQuantity} {minimumQuantity === 1 ? "unidad" : "unidades"}
+          </div>
+        )}
 
         <div className="mt-auto" />
 
@@ -97,6 +104,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
           imageUrl={product.imageUrl}
           unitPriceCents={product.priceCents}
           salePriceCents={product.salePriceCents}
+          minimumQuantity={product.minimumQuantity}
         />
       </CardFooter>
     </Card>

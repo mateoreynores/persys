@@ -43,10 +43,16 @@ export type StoreProduct = {
   imageUrl: string;
   priceCents: number;
   salePriceCents: number | null;
+  minimumQuantity: number | null;
   isFeatured: boolean;
   isActive: boolean;
   availabilityNote: string | null;
   sortOrder: number;
+};
+
+export type StoreSettings = {
+  id: string;
+  cartMinimumAmountCents: number;
 };
 
 export type CatalogSnapshot = {

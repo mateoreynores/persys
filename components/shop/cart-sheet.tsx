@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -27,10 +28,27 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/hooks/use-cart";
 import { formatCurrency } from "@/lib/format";
+import {
+  getPurchaseValidationMessages,
+  normalizeMinimumQuantity,
+} from "@/lib/store/purchase-rules";
 import { cn } from "@/lib/utils";
 
-export function CartSheet() {
+export function CartSheet({ cartMinimumAmountCents = 0 }: { cartMinimumAmountCents?: number }) {
   const cart = useCart();
+  const validationMessages = useMemo(
+    () =>
+      getPurchaseValidationMessages({
+        items: cart.items.map((item) => ({
+          name: item.name,
+          quantity: item.quantity,
+          minimumQuantity: item.minimumQuantity,
+        })),
+        totalCents: cart.totalCents,
+        cartMinimumAmountCents,
+      }),
+    [cart.items, cart.totalCents, cartMinimumAmountCents],
+  );
 
   return (
     <Sheet>
@@ -94,6 +112,7 @@ export function CartSheet() {
                 {cart.items.map((item) => {
                   const unit = item.salePriceCents ?? item.unitPriceCents;
                   const hasImage = Boolean(item.imageUrl);
+                  const minimumQuantity = normalizeMinimumQuantity(item.minimumQuantity) ?? 1;
                   return (
                     <article
                       key={item.productId}
@@ -123,6 +142,11 @@ export function CartSheet() {
                             <p className="text-[11px] text-muted-foreground">
                               {item.brand}
                             </p>
+                            {item.minimumQuantity && (
+                              <p className="text-[11px] text-amber-700">
+                                Minimo: {item.minimumQuantity} u.
+                              </p>
+                            )}
                           </div>
                           <Button
                             variant="ghost"
@@ -146,7 +170,7 @@ export function CartSheet() {
                               onClick={() =>
                                 cart.updateQuantity(item.productId, item.quantity - 1)
                               }
-                              disabled={item.quantity <= 1}
+                              disabled={item.quantity <= minimumQuantity}
                               aria-label="Restar"
                               className="disabled:opacity-30"
                             >
@@ -202,6 +226,14 @@ export function CartSheet() {
 
               {/* Totals */}
               <div className="rounded-xl bg-muted/40 p-3">
+                {cartMinimumAmountCents > 0 && (
+                  <div className="mb-2 flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Pedido minimo</span>
+                    <span className="tabular-nums">
+                      {formatCurrency(cartMinimumAmountCents)}
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span className="tabular-nums">{formatCurrency(cart.subtotalCents)}</span>
@@ -221,6 +253,13 @@ export function CartSheet() {
                   </span>
                 </div>
               </div>
+              {validationMessages.length > 0 && (
+                <div className="rounded-xl border border-amber-300/70 bg-amber-50/80 p-3 text-xs text-amber-950">
+                  {validationMessages.map((message) => (
+                    <p key={message}>{message}</p>
+                  ))}
+                </div>
+              )}
             </>
           )}
         </div>

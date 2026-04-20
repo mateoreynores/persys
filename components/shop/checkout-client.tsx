@@ -22,6 +22,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/hooks/use-cart";
 import { formatCurrency } from "@/lib/format";
+import {
+  getPurchaseValidationMessages,
+  normalizeMinimumQuantity,
+} from "@/lib/store/purchase-rules";
 import { cn } from "@/lib/utils";
 
 type FormState = {
@@ -63,7 +67,11 @@ function FieldGroup({
   );
 }
 
-export function CheckoutClient() {
+export function CheckoutClient({
+  cartMinimumAmountCents = 0,
+}: {
+  cartMinimumAmountCents?: number;
+}) {
   const cart = useCart();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -93,6 +101,20 @@ export function CheckoutClient() {
       form.deliveryCity.trim().length >= 2
     );
   }, [form]);
+  const purchaseValidationMessages = useMemo(
+    () =>
+      getPurchaseValidationMessages({
+        items: cart.items.map((item) => ({
+          name: item.name,
+          quantity: item.quantity,
+          minimumQuantity: item.minimumQuantity,
+        })),
+        totalCents: cart.totalCents,
+        cartMinimumAmountCents,
+      }),
+    [cart.items, cart.totalCents, cartMinimumAmountCents],
+  );
+  const hasPurchaseRuleErrors = purchaseValidationMessages.length > 0;
 
   if (!cart.isHydrated) {
     return (
@@ -142,6 +164,12 @@ export function CheckoutClient() {
               if (!isFormValid) {
                 toast.error("Revisá los campos obligatorios", {
                   description: "Empresa, contacto, teléfono, email y ciudad son requeridos.",
+                });
+                return;
+              }
+              if (hasPurchaseRuleErrors) {
+                toast.error("No se puede confirmar el pedido", {
+                  description: purchaseValidationMessages[0],
                 });
                 return;
               }
@@ -265,11 +293,18 @@ export function CheckoutClient() {
             </FieldGroup>
 
             <div className="md:col-span-2">
+              {purchaseValidationMessages.length > 0 && (
+                <div className="mb-3 rounded-xl border border-amber-300/70 bg-amber-50/80 p-3 text-sm text-amber-950">
+                  {purchaseValidationMessages.map((message) => (
+                    <p key={message}>{message}</p>
+                  ))}
+                </div>
+              )}
               <Button
                 type="submit"
                 size="lg"
                 className="w-full gap-2"
-                disabled={isSubmitting || !isFormValid}
+                disabled={isSubmitting || !isFormValid || hasPurchaseRuleErrors}
               >
                 {isSubmitting ? (
                   <>
@@ -306,35 +341,47 @@ export function CheckoutClient() {
             </div>
           </CardHeader>
           <CardContent className="space-y-2.5">
-            {cart.items.map((item) => (
-              <div key={item.productId} className="flex items-center gap-2.5">
-                {/* Mini thumbnail */}
-                <div className="relative size-9 shrink-0 overflow-hidden rounded-md bg-muted/40">
-                  {item.imageUrl ? (
-                    <Image
-                      src={item.imageUrl}
-                      alt={item.name}
-                      fill
-                      unoptimized
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="image-placeholder h-full w-full">
-                      <HugeiconsIcon icon={Image01Icon} size={12} strokeWidth={1.4} />
-                    </div>
-                  )}
+            {cart.items.map((item) => {
+              const minimumQuantity = normalizeMinimumQuantity(item.minimumQuantity);
+              return (
+                <div key={item.productId} className="flex items-center gap-2.5">
+                  {/* Mini thumbnail */}
+                  <div className="relative size-9 shrink-0 overflow-hidden rounded-md bg-muted/40">
+                    {item.imageUrl ? (
+                      <Image
+                        src={item.imageUrl}
+                        alt={item.name}
+                        fill
+                        unoptimized
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="image-placeholder h-full w-full">
+                        <HugeiconsIcon icon={Image01Icon} size={12} strokeWidth={1.4} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm">{item.name}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      x{item.quantity}
+                      {minimumQuantity ? ` · min. ${minimumQuantity}` : ""}
+                    </p>
+                  </div>
+                  <p className="shrink-0 text-sm tabular-nums">
+                    {formatCurrency((item.salePriceCents ?? item.unitPriceCents) * item.quantity)}
+                  </p>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm">{item.name}</p>
-                  <p className="text-[11px] text-muted-foreground">x{item.quantity}</p>
-                </div>
-                <p className="shrink-0 text-sm tabular-nums">
-                  {formatCurrency((item.salePriceCents ?? item.unitPriceCents) * item.quantity)}
-                </p>
-              </div>
-            ))}
+              );
+            })}
 
             <div className="space-y-1 border-t border-border/30 pt-2.5 text-sm">
+              {cartMinimumAmountCents > 0 && (
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Pedido minimo</span>
+                  <span className="tabular-nums">{formatCurrency(cartMinimumAmountCents)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
                 <span className="tabular-nums">{formatCurrency(cart.subtotalCents)}</span>

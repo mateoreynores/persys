@@ -18,7 +18,7 @@ CREATE TABLE "promo_banners" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "products" DROP CONSTRAINT "products_sku_unique";--> statement-breakpoint
+ALTER TABLE "products" DROP CONSTRAINT IF EXISTS "products_sku_unique";--> statement-breakpoint
 CREATE INDEX "promo_banner_products_banner_idx" ON "promo_banner_products" USING btree ("banner_id");--> statement-breakpoint
 CREATE INDEX "promo_banners_active_sort_idx" ON "promo_banners" USING btree ("is_active","sort_order");--> statement-breakpoint
-ALTER TABLE "products" DROP COLUMN "sku";
+ALTER TABLE "products" DROP COLUMN IF EXISTS "sku";

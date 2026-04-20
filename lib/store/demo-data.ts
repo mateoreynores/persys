@@ -1,5 +1,10 @@
 import { createId, createOrderNumber } from "@/lib/id";
-import type { OrderRecord, StoreCategory, StoreProduct } from "@/lib/store/types";
+import type { OrderRecord, StoreCategory, StoreProduct, StoreSettings } from "@/lib/store/types";
+
+export const demoStoreSettings: StoreSettings = {
+  id: "default",
+  cartMinimumAmountCents: 0,
+};
 
 export const demoCategories: StoreCategory[] = [
   {
@@ -50,6 +55,7 @@ export const demoProducts: StoreProduct[] = [
       "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=1200&q=80",
     priceCents: 324000,
     salePriceCents: 299000,
+    minimumQuantity: null,
     isFeatured: true,
     isActive: true,
     availabilityNote: "Entrega en 48 hs",
@@ -68,6 +74,7 @@ export const demoProducts: StoreProduct[] = [
       "https://images.unsplash.com/photo-1551462147-37885acc36f1?auto=format&fit=crop&w=1200&q=80",
     priceCents: 238000,
     salePriceCents: null,
+    minimumQuantity: null,
     isFeatured: false,
     isActive: true,
     availabilityNote: null,
@@ -86,6 +93,7 @@ export const demoProducts: StoreProduct[] = [
       "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=1200&q=80",
     priceCents: 412000,
     salePriceCents: 389000,
+    minimumQuantity: null,
     isFeatured: true,
     isActive: true,
     availabilityNote: "Promoción de temporada",
@@ -104,6 +112,7 @@ export const demoProducts: StoreProduct[] = [
       "https://images.unsplash.com/photo-1564419320461-6870880221ad?auto=format&fit=crop&w=1200&q=80",
     priceCents: 185000,
     salePriceCents: null,
+    minimumQuantity: null,
     isFeatured: false,
     isActive: true,
     availabilityNote: null,
@@ -122,6 +131,7 @@ export const demoProducts: StoreProduct[] = [
       "https://images.unsplash.com/photo-1583947582886-f40ec95dd752?auto=format&fit=crop&w=1200&q=80",
     priceCents: 164000,
     salePriceCents: 149000,
+    minimumQuantity: null,
     isFeatured: true,
     isActive: true,
     availabilityNote: null,
@@ -140,6 +150,7 @@ export const demoProducts: StoreProduct[] = [
       "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=1200&q=80",
     priceCents: 278000,
     salePriceCents: null,
+    minimumQuantity: null,
     isFeatured: false,
     isActive: true,
     availabilityNote: "Últimas unidades del lote",
@@ -158,6 +169,7 @@ export const demoProducts: StoreProduct[] = [
       "https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=1200&q=80",
     priceCents: 356000,
     salePriceCents: 332000,
+    minimumQuantity: null,
     isFeatured: true,
     isActive: true,
     availabilityNote: null,
@@ -176,6 +188,7 @@ export const demoProducts: StoreProduct[] = [
       "https://images.unsplash.com/photo-1516747773440-fd9eb4d5b5dd?auto=format&fit=crop&w=1200&q=80",
     priceCents: 214000,
     salePriceCents: null,
+    minimumQuantity: null,
     isFeatured: false,
     isActive: true,
     availabilityNote: null,

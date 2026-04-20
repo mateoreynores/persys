@@ -16,6 +16,7 @@ import {
   updateOrderStatus,
   upsertCategory,
   upsertProduct,
+  upsertStoreSettings,
 } from "@/lib/store/repository";
 import { orderStatusSchema } from "@/lib/store/types";
 
@@ -40,6 +41,7 @@ function revalidateCatalog() {
   revalidatePath("/admin");
   revalidatePath("/admin/catalog");
   revalidatePath("/shop");
+  revalidatePath("/shop/checkout");
 }
 
 function revalidatePromos() {
@@ -82,6 +84,7 @@ export async function saveCategoryAction(formData: FormData) {
 export async function saveProductAction(formData: FormData) {
   const session = await requireAdminUser();
   const salePriceInput = getOptionalString(formData, "salePrice");
+  const minimumQuantityInput = getOptionalString(formData, "minimumQuantity");
 
   const product = await upsertProduct({
     id: getOptionalString(formData, "id") || undefined,
@@ -92,6 +95,7 @@ export async function saveProductAction(formData: FormData) {
     imageUrl: getRequiredString(formData, "imageUrl"),
     priceCents: parseCurrencyInput(getRequiredString(formData, "price")),
     salePriceCents: salePriceInput ? parseCurrencyInput(salePriceInput) : null,
+    minimumQuantity: minimumQuantityInput ? getNumberValue(formData, "minimumQuantity") : null,
     availabilityNote: getOptionalString(formData, "availabilityNote"),
     sortOrder: getNumberValue(formData, "sortOrder"),
     isFeatured: getCheckboxValue(formData, "isFeatured"),
@@ -105,6 +109,28 @@ export async function saveProductAction(formData: FormData) {
       entityType: "product",
       entityId: product.id,
       payload: { name: product.name },
+    });
+  }
+
+  revalidateCatalog();
+}
+
+export async function saveStoreSettingsAction(formData: FormData) {
+  const session = await requireAdminUser();
+
+  const settings = await upsertStoreSettings({
+    cartMinimumAmountCents: parseCurrencyInput(getOptionalString(formData, "cartMinimumAmount")),
+  });
+
+  if (session?.userId) {
+    await logAdminAction({
+      clerkUserId: session.userId,
+      action: "save_store_settings",
+      entityType: "store_settings",
+      entityId: settings.id,
+      payload: {
+        cartMinimumAmountCents: settings.cartMinimumAmountCents,
+      },
     });
   }
 

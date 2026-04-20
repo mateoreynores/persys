@@ -7,7 +7,11 @@ export default async function AdminCatalogPage() {
 
   return (
     <AdminShell title="Catálogo y precios">
-      <CatalogClient categories={catalog.categories} products={catalog.products} />
+      <CatalogClient
+        categories={catalog.categories}
+        products={catalog.products}
+        settings={catalog.settings}
+      />
     </AdminShell>
   );
 }

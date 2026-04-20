@@ -17,8 +17,13 @@ import { SiteHeader } from "@/components/site/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { formatCurrency } from "@/lib/format";
 import { listActivePromos } from "@/lib/store/promos";
-import { getCatalogSnapshot, getRuntimeModeLabel } from "@/lib/store/repository";
+import {
+  getCatalogSnapshot,
+  getRuntimeModeLabel,
+  getStoreSettings,
+} from "@/lib/store/repository";
 import { cn } from "@/lib/utils";
 
 type SearchParamValue = string | string[] | undefined;
@@ -35,10 +40,11 @@ export default async function ShopPage({
   const params = await searchParams;
   const query = getSingleValue(params.q) ?? "";
   const category = getSingleValue(params.category) ?? "";
-  const [snapshot, promos, runtimeMode] = await Promise.all([
+  const [snapshot, promos, runtimeMode, settings] = await Promise.all([
     getCatalogSnapshot({ query, category }),
     listActivePromos(),
     Promise.resolve(getRuntimeModeLabel()),
+    getStoreSettings(),
   ]);
 
   const hasFilters = Boolean(query || category);
@@ -46,7 +52,10 @@ export default async function ShopPage({
 
   return (
     <div className="min-h-screen">
-      <SiteHeader cartSlot={<CartSheet />} compact />
+      <SiteHeader
+        cartSlot={<CartSheet cartMinimumAmountCents={settings.cartMinimumAmountCents} />}
+        compact
+      />
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Promo carousel */}
@@ -66,6 +75,9 @@ export default async function ShopPage({
               </div>
               <p className="mt-1 text-sm text-muted-foreground">
                 {snapshot.activeProductCount} productos activos
+                {settings.cartMinimumAmountCents > 0
+                  ? ` · Pedido minimo ${formatCurrency(settings.cartMinimumAmountCents)}`
+                  : ""}
               </p>
             </div>
             <Link

@@ -2,6 +2,8 @@
 
 import { createContext, useEffect, useState, useSyncExternalStore } from "react";
 
+import { normalizeMinimumQuantity } from "@/lib/store/purchase-rules";
+
 type CartItem = {
   productId: string;
   name: string;
@@ -9,6 +11,7 @@ type CartItem = {
   imageUrl: string;
   unitPriceCents: number;
   salePriceCents: number | null;
+  minimumQuantity: number | null;
   quantity: number;
 };
 
@@ -45,7 +48,14 @@ function readStoredCart() {
   try {
     const parsed = JSON.parse(stored) as { items?: CartItem[]; notes?: string };
     return {
-      items: Array.isArray(parsed.items) ? parsed.items : [],
+      items: Array.isArray(parsed.items)
+        ? parsed.items
+            .filter((item) => item && typeof item.productId === "string")
+            .map((item) => ({
+              ...item,
+              minimumQuantity: normalizeMinimumQuantity(item.minimumQuantity),
+            }))
+        : [],
       notes: typeof parsed.notes === "string" ? parsed.notes : "",
     };
   } catch {
@@ -87,6 +97,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     addItem(item, quantity = 1) {
       setItems((current) => {
         const existing = current.find((entry) => entry.productId === item.productId);
+        const minimumQuantity = normalizeMinimumQuantity(item.minimumQuantity);
         if (existing) {
           return current.map((entry) =>
             entry.productId === item.productId
@@ -95,7 +106,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           );
         }
 
-        return [...current, { ...item, quantity }];
+        return [
+          ...current,
+          { ...item, minimumQuantity, quantity: Math.max(quantity, minimumQuantity ?? 1) },
+        ];
       });
     },
     removeItem(productId) {
@@ -109,7 +123,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       setItems((current) =>
         current.map((item) =>
-          item.productId === productId ? { ...item, quantity: Math.min(quantity, 999) } : item,
+          item.productId === productId
+            ? {
+                ...item,
+                quantity: Math.max(
+                  Math.min(quantity, 999),
+                  normalizeMinimumQuantity(item.minimumQuantity) ?? 1,
+                ),
+              }
+            : item,
         ),
       );
     },

@@ -47,6 +47,7 @@ export const products = pgTable(
     imageUrl: text("image_url").notNull(),
     priceCents: integer("price_cents").notNull(),
     salePriceCents: integer("sale_price_cents"),
+    minimumQuantity: integer("minimum_quantity"),
     isFeatured: boolean("is_featured").default(false).notNull(),
     isActive: boolean("is_active").default(true).notNull(),
     availabilityNote: varchar("availability_note", { length: 191 }),
@@ -62,6 +63,12 @@ export const products = pgTable(
     index("products_featured_idx").on(table.isFeatured, table.isActive),
   ],
 );
+
+export const storeSettings = pgTable("store_settings", {
+  id: varchar("id", { length: 191 }).primaryKey(),
+  cartMinimumAmountCents: integer("cart_minimum_amount_cents").default(0).notNull(),
+  ...timestamps,
+});
 
 export const orderStatusValues = [
   "pending_whatsapp",

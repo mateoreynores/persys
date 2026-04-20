@@ -2,13 +2,34 @@ import "server-only";
 
 import { asc, desc, eq, inArray } from "drizzle-orm";
 
-import { adminAuditLogs, categories, orderItems, orders, products } from "@/db/schema";
+import {
+  adminAuditLogs,
+  categories,
+  orderItems,
+  orders,
+  products,
+  storeSettings,
+} from "@/db/schema";
 import { getDb } from "@/lib/db";
 import { getBusinessWhatsAppNumber, isDatabaseConfigured } from "@/lib/env";
 import { slugify } from "@/lib/format";
 import { createId, createOrderNumber } from "@/lib/id";
-import { demoCategories, demoOrders, demoProducts } from "@/lib/store/demo-data";
-import { checkoutSchema, type CatalogSnapshot, type CheckoutInput, type OrderRecord, type StoreCategory, type StoreProduct } from "@/lib/store/types";
+import { demoCategories, demoOrders, demoProducts, demoStoreSettings } from "@/lib/store/demo-data";
+import {
+  getPurchaseValidationMessages,
+  normalizeMinimumQuantity,
+} from "@/lib/store/purchase-rules";
+import {
+  checkoutSchema,
+  type CatalogSnapshot,
+  type CheckoutInput,
+  type OrderRecord,
+  type StoreCategory,
+  type StoreProduct,
+  type StoreSettings,
+} from "@/lib/store/types";
+
+const STORE_SETTINGS_ID = "default";
 
 function sortCategories(items: StoreCategory[]) {
   return [...items].sort((left, right) => {
@@ -48,6 +69,7 @@ function mapProductRow(
     imageUrl: row.imageUrl,
     priceCents: row.priceCents,
     salePriceCents: row.salePriceCents,
+    minimumQuantity: normalizeMinimumQuantity(row.minimumQuantity),
     isFeatured: row.isFeatured,
     isActive: row.isActive,
     availabilityNote: row.availabilityNote,
@@ -92,6 +114,26 @@ async function listDbProducts() {
     .orderBy(asc(products.sortOrder), asc(products.name));
 
   return rows.map((row) => mapProductRow(row, categoryMap));
+}
+
+async function getDbStoreSettings(): Promise<StoreSettings> {
+  const db = getDb();
+
+  if (!db) {
+    return demoStoreSettings;
+  }
+
+  const rows = await db.select().from(storeSettings).limit(1);
+  const row = rows[0];
+
+  if (!row) {
+    return demoStoreSettings;
+  }
+
+  return {
+    id: row.id,
+    cartMinimumAmountCents: row.cartMinimumAmountCents,
+  };
 }
 
 function buildCatalogSnapshot(
@@ -151,15 +193,21 @@ export async function getFeaturedLandingProducts() {
   return snapshot.featuredProducts.slice(0, 3);
 }
 
+export async function getStoreSettings() {
+  return getDbStoreSettings();
+}
+
 export async function getAdminCatalogSnapshot() {
-  const [categoryRows, productRows] = await Promise.all([
+  const [categoryRows, productRows, settings] = await Promise.all([
     listDbCategories(),
     listDbProducts(),
+    getDbStoreSettings(),
   ]);
 
   return {
     categories: sortCategories(categoryRows),
     products: sortProducts(productRows),
+    settings,
   };
 }
 
@@ -352,6 +400,20 @@ export async function createOrder(rawInput: CheckoutInput) {
   const subtotalCents = items.reduce((total, item) => total + item.lineSubtotalCents, 0);
   const totalCents = items.reduce((total, item) => total + item.lineTotalCents, 0);
   const discountCents = subtotalCents - totalCents;
+  const validationMessages = getPurchaseValidationMessages({
+    items: items.map((item) => ({
+      name: item.productSnapshotName,
+      quantity: item.quantity,
+      minimumQuantity: productMap.get(item.productId)?.minimumQuantity,
+    })),
+    totalCents,
+    cartMinimumAmountCents: catalog.settings.cartMinimumAmountCents,
+  });
+
+  if (validationMessages.length > 0) {
+    throw new Error(validationMessages[0]);
+  }
+
   const orderId = createId("order");
   const orderNumber = createOrderNumber();
   const whatsAppMessage = buildWhatsAppMessage({
@@ -488,6 +550,7 @@ export async function upsertProduct(input: {
   imageUrl: string;
   priceCents: number;
   salePriceCents: number | null;
+  minimumQuantity: number | null;
   availabilityNote?: string;
   sortOrder: number;
   isFeatured: boolean;
@@ -513,6 +576,7 @@ export async function upsertProduct(input: {
       typeof input.salePriceCents === "number" && input.salePriceCents > 0
         ? input.salePriceCents
         : null,
+    minimumQuantity: normalizeMinimumQuantity(input.minimumQuantity),
     isFeatured: input.isFeatured,
     isActive: input.isActive,
     availabilityNote: input.availabilityNote?.trim() || null,
@@ -546,6 +610,41 @@ export async function upsertProduct(input: {
     categoryName: category.name,
     categorySlug: category.slug,
   };
+}
+
+export async function upsertStoreSettings(input: { cartMinimumAmountCents: number }) {
+  const db = getDb();
+  const payload: StoreSettings = {
+    id: STORE_SETTINGS_ID,
+    cartMinimumAmountCents:
+      typeof input.cartMinimumAmountCents === "number" && input.cartMinimumAmountCents > 0
+        ? input.cartMinimumAmountCents
+        : 0,
+  };
+
+  if (!db) {
+    demoStoreSettings.cartMinimumAmountCents = payload.cartMinimumAmountCents;
+    return demoStoreSettings;
+  }
+
+  const exists = await db
+    .select({ id: storeSettings.id })
+    .from(storeSettings)
+    .where(eq(storeSettings.id, payload.id));
+
+  if (exists.length > 0) {
+    await db
+      .update(storeSettings)
+      .set({
+        cartMinimumAmountCents: payload.cartMinimumAmountCents,
+        updatedAt: new Date(),
+      })
+      .where(eq(storeSettings.id, payload.id));
+  } else {
+    await db.insert(storeSettings).values(payload);
+  }
+
+  return payload;
 }
 
 export async function updateOrderStatus(orderId: string, status: OrderRecord["status"]) {
