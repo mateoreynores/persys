@@ -69,6 +69,22 @@ export type OrderLine = {
   lineTotalCents: number;
 };
 
+export type PromoBanner = {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  imageUrl: string;
+  imageKey: string;
+  ctaLabel: string;
+  isActive: boolean;
+  sortOrder: number;
+  productIds: string[];
+};
+
+export type PromoBannerWithProducts = PromoBanner & {
+  products: StoreProduct[];
+};
+
 export type OrderRecord = {
   id: string;
   orderNumber: string;

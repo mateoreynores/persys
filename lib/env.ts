@@ -45,3 +45,35 @@ export function isDatabaseConfigured() {
 export function getBusinessWhatsAppNumber() {
   return (process.env.BUSINESS_WHATSAPP_NUMBER ?? "").replace(/\D/g, "");
 }
+
+export type R2Config = {
+  accountId: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucket: string;
+  publicBaseUrl: string;
+};
+
+export function getR2Config(): R2Config | null {
+  const accountId = process.env.R2_ACCOUNT_ID;
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+  const bucket = process.env.R2_BUCKET;
+  const publicBaseUrl = process.env.R2_PUBLIC_BASE_URL;
+
+  if (!accountId || !accessKeyId || !secretAccessKey || !bucket || !publicBaseUrl) {
+    return null;
+  }
+
+  return {
+    accountId,
+    accessKeyId,
+    secretAccessKey,
+    bucket,
+    publicBaseUrl: publicBaseUrl.replace(/\/+$/, ""),
+  };
+}
+
+export function isR2Configured() {
+  return getR2Config() !== null;
+}

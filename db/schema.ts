@@ -5,6 +5,7 @@ import {
   jsonb,
   pgEnum,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   varchar,
@@ -114,6 +115,37 @@ export const orderItems = pgTable(
       .notNull(),
   },
   (table) => [index("order_items_order_idx").on(table.orderId)],
+);
+
+export const promoBanners = pgTable(
+  "promo_banners",
+  {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    title: varchar("title", { length: 191 }).notNull(),
+    subtitle: varchar("subtitle", { length: 255 }),
+    imageUrl: text("image_url").notNull(),
+    imageKey: varchar("image_key", { length: 255 }).notNull(),
+    ctaLabel: varchar("cta_label", { length: 64 })
+      .default("Ver promoción")
+      .notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    sortOrder: integer("sort_order").default(0).notNull(),
+    ...timestamps,
+  },
+  (table) => [index("promo_banners_active_sort_idx").on(table.isActive, table.sortOrder)],
+);
+
+export const promoBannerProducts = pgTable(
+  "promo_banner_products",
+  {
+    bannerId: varchar("banner_id", { length: 191 }).notNull(),
+    productId: varchar("product_id", { length: 191 }).notNull(),
+    sortOrder: integer("sort_order").default(0).notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.bannerId, table.productId] }),
+    index("promo_banner_products_banner_idx").on(table.bannerId),
+  ],
 );
 
 export const adminAuditLogs = pgTable(

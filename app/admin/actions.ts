@@ -5,6 +5,12 @@ import { redirect } from "next/navigation";
 
 import { requireAdminUser } from "@/lib/admin";
 import { parseCurrencyInput } from "@/lib/format";
+import { keyFromPublicUrl } from "@/lib/r2";
+import {
+  deletePromoBanner,
+  setPromoProducts,
+  upsertPromoBanner,
+} from "@/lib/store/promos";
 import {
   logAdminAction,
   updateOrderStatus,
@@ -34,6 +40,19 @@ function revalidateCatalog() {
   revalidatePath("/admin");
   revalidatePath("/admin/catalog");
   revalidatePath("/shop");
+}
+
+function revalidatePromos() {
+  revalidatePath("/admin");
+  revalidatePath("/admin/promos");
+  revalidatePath("/shop");
+}
+
+function getAllValues(formData: FormData, key: string) {
+  return formData
+    .getAll(key)
+    .map((value) => String(value).trim())
+    .filter(Boolean);
 }
 
 export async function saveCategoryAction(formData: FormData) {
@@ -90,6 +109,63 @@ export async function saveProductAction(formData: FormData) {
   }
 
   revalidateCatalog();
+}
+
+export async function savePromoBannerAction(formData: FormData) {
+  const session = await requireAdminUser();
+
+  const id = getOptionalString(formData, "id") || undefined;
+  const imageUrl = getRequiredString(formData, "imageUrl");
+  const providedKey = getOptionalString(formData, "imageKey");
+  const imageKey = providedKey || keyFromPublicUrl(imageUrl) || "";
+
+  if (!imageUrl) {
+    throw new Error("Subí una imagen para la promoción.");
+  }
+
+  const banner = await upsertPromoBanner({
+    id,
+    title: getRequiredString(formData, "title"),
+    subtitle: getOptionalString(formData, "subtitle") || null,
+    imageUrl,
+    imageKey,
+    ctaLabel: getOptionalString(formData, "ctaLabel") || "Ver promoción",
+    sortOrder: getNumberValue(formData, "sortOrder"),
+    isActive: getCheckboxValue(formData, "isActive"),
+  });
+
+  const productIds = getAllValues(formData, "productIds");
+  await setPromoProducts(banner.id, productIds);
+
+  if (session?.userId) {
+    await logAdminAction({
+      clerkUserId: session.userId,
+      action: "save_promo_banner",
+      entityType: "promo_banner",
+      entityId: banner.id,
+      payload: { title: banner.title, productCount: productIds.length },
+    });
+  }
+
+  revalidatePromos();
+}
+
+export async function deletePromoBannerAction(formData: FormData) {
+  const session = await requireAdminUser();
+  const bannerId = getRequiredString(formData, "id");
+
+  await deletePromoBanner(bannerId);
+
+  if (session?.userId) {
+    await logAdminAction({
+      clerkUserId: session.userId,
+      action: "delete_promo_banner",
+      entityType: "promo_banner",
+      entityId: bannerId,
+    });
+  }
+
+  revalidatePromos();
 }
 
 export async function updateOrderStatusAction(formData: FormData) {

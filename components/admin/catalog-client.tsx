@@ -3,10 +3,11 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon, Edit01Icon, Image01Icon } from "@hugeicons/core-free-icons";
+import { Add01Icon, Edit01Icon } from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
 
 import { saveCategoryAction, saveProductAction } from "@/app/admin/actions";
+import { ImageUpload } from "@/components/admin/image-upload";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -299,25 +300,14 @@ export function CatalogClient({
                 className="min-h-16 resize-none"
               />
             </div>
-            <div className="space-y-1.5 md:col-span-2">
-              <label className="text-sm font-medium" htmlFor="dlg-product-image">
-                <span className="flex items-center gap-1.5">
-                  <HugeiconsIcon
-                    icon={Image01Icon}
-                    size={14}
-                    strokeWidth={2}
-                    className="text-muted-foreground"
-                  />
-                  URL de imagen
-                </span>
-              </label>
-              <Input
-                id="dlg-product-image"
+            <div className="md:col-span-2">
+              <ImageUpload
                 name="imageUrl"
-                type="url"
-                placeholder="https://..."
-                defaultValue={editingProduct?.imageUrl ?? ""}
+                scope="product"
+                defaultValue={editingProduct?.imageUrl}
                 required
+                label="Imagen del producto"
+                aspectClass="aspect-[4/3]"
               />
             </div>
             <div className="space-y-1.5">

@@ -11,11 +11,13 @@ import {
 
 import { CartSheet } from "@/components/shop/cart-sheet";
 import { ProductCard } from "@/components/shop/product-card";
+import { PromoCarousel } from "@/components/shop/promo-carousel";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { listActivePromos } from "@/lib/store/promos";
 import { getCatalogSnapshot, getRuntimeModeLabel } from "@/lib/store/repository";
 import { cn } from "@/lib/utils";
 
@@ -33,18 +35,27 @@ export default async function ShopPage({
   const params = await searchParams;
   const query = getSingleValue(params.q) ?? "";
   const category = getSingleValue(params.category) ?? "";
-  const [snapshot, runtimeMode] = await Promise.all([
+  const [snapshot, promos, runtimeMode] = await Promise.all([
     getCatalogSnapshot({ query, category }),
+    listActivePromos(),
     Promise.resolve(getRuntimeModeLabel()),
   ]);
 
   const hasFilters = Boolean(query || category);
+  const showPromos = !hasFilters && promos.length > 0;
 
   return (
     <div className="min-h-screen">
       <SiteHeader cartSlot={<CartSheet />} compact />
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Promo carousel */}
+        {showPromos && (
+          <div className="mb-8">
+            <PromoCarousel promos={promos} />
+          </div>
+        )}
+
         {/* Page header */}
         <div className="mb-6">
           <div className="flex flex-wrap items-start justify-between gap-4">

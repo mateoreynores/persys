@@ -15,6 +15,13 @@
       "when": 1776178889889,
       "tag": "0001_remove_product_sku",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776710080126,
+      "tag": "0002_aromatic_captain_stacy",
+      "breakpoints": true
     }
   ]
 }

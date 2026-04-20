@@ -2,6 +2,7 @@ import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   DashboardSquare01Icon,
+  Megaphone01Icon,
   Package01Icon,
   ShoppingCart01Icon,
   Store01Icon,
@@ -14,6 +15,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: DashboardSquare01Icon },
   { href: "/admin/catalog", label: "Catálogo", icon: Package01Icon },
+  { href: "/admin/promos", label: "Promos", icon: Megaphone01Icon },
   { href: "/admin/orders", label: "Pedidos", icon: ShoppingCart01Icon },
 ];
 
