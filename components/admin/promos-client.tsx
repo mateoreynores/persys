@@ -215,15 +215,17 @@ export function PromosClient({
           if (!open) setDialog({ mode: "closed" });
         }}
       >
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              {editing ? `Editar promoción · ${editing.title}` : "Nueva promoción"}
-            </DialogTitle>
-            <DialogDescription>
-              Subí el banner y elegí los productos que se muestran cuando el cliente hace click.
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="flex max-h-[min(85dvh,880px)] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl">
+          <div className="shrink-0 border-b border-border/40 px-6 pt-6 pb-4">
+            <DialogHeader>
+              <DialogTitle>
+                {editing ? `Editar promoción · ${editing.title}` : "Nueva promoción"}
+              </DialogTitle>
+              <DialogDescription>
+                Subí el banner y elegí los productos que se muestran cuando el cliente hace click.
+              </DialogDescription>
+            </DialogHeader>
+          </div>
           <PromoForm
             key={editing?.id ?? "new"}
             editing={editing}
@@ -277,161 +279,167 @@ function PromoForm({
   }
 
   return (
-    <form action={onSubmit} className="grid gap-4 md:grid-cols-[1fr_1fr]">
+    <form action={onSubmit} className="flex min-h-0 flex-1 flex-col gap-0">
       {editing && <input type="hidden" name="id" value={editing.id} />}
       {Array.from(selected).map((productId) => (
         <input key={productId} type="hidden" name="productIds" value={productId} />
       ))}
 
-      <div className="space-y-3 md:col-span-2">
-        <ImageUpload
-          name="imageUrl"
-          keyName="imageKey"
-          scope="banner"
-          defaultValue={editing?.imageUrl}
-          defaultKey={editing?.imageKey}
-          required
-          label="Banner (PNG, JPG o WebP · recomendado 1920×600)"
-          aspectClass="aspect-[16/5]"
-        />
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium" htmlFor="dlg-promo-title">
-          Título
-        </label>
-        <Input
-          id="dlg-promo-title"
-          name="title"
-          defaultValue={editing?.title ?? ""}
-          placeholder="Liquidación de invierno"
-          required
-        />
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium" htmlFor="dlg-promo-cta">
-          Texto del botón
-        </label>
-        <Input
-          id="dlg-promo-cta"
-          name="ctaLabel"
-          defaultValue={editing?.ctaLabel ?? "Ver promoción"}
-          placeholder="Ver promoción"
-        />
-      </div>
-
-      <div className="space-y-1.5 md:col-span-2">
-        <label className="text-sm font-medium" htmlFor="dlg-promo-subtitle">
-          Subtítulo (opcional)
-        </label>
-        <Textarea
-          id="dlg-promo-subtitle"
-          name="subtitle"
-          defaultValue={editing?.subtitle ?? ""}
-          placeholder="Hasta 30% off en toda la línea industrial"
-          className="min-h-14 resize-none"
-        />
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium" htmlFor="dlg-promo-sort">
-          Orden
-        </label>
-        <Input
-          id="dlg-promo-sort"
-          name="sortOrder"
-          type="number"
-          defaultValue={String(editing?.sortOrder ?? 0)}
-        />
-      </div>
-
-      <label className="flex items-center gap-2 rounded-lg border border-border/60 px-3 py-2 text-sm">
-        <input
-          type="checkbox"
-          name="isActive"
-          defaultChecked={editing?.isActive ?? true}
-          className="accent-primary"
-        />
-        Activa en el shop
-      </label>
-
-      <div className="space-y-2 md:col-span-2">
-        <div className="flex items-center justify-between">
-          <label className="text-sm font-medium">
-            Productos relacionados{" "}
-            <span className="text-xs font-normal text-muted-foreground">
-              ({selected.size} seleccionados)
-            </span>
-          </label>
-          <div className="relative w-48">
-            <HugeiconsIcon
-              icon={Search01Icon}
-              size={13}
-              strokeWidth={2}
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/50"
-            />
-            <Input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Buscar producto"
-              className="h-8 pl-8 text-xs"
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-4">
+        <div className="grid gap-4 md:grid-cols-[1fr_1fr]">
+          <div className="space-y-3 md:col-span-2">
+            <ImageUpload
+              name="imageUrl"
+              keyName="imageKey"
+              scope="banner"
+              defaultValue={editing?.imageUrl}
+              defaultKey={editing?.imageKey}
+              required
+              label="Banner (PNG, JPG o WebP · recomendado 1920×600)"
+              aspectClass="aspect-[16/5]"
             />
           </div>
-        </div>
 
-        <div className="max-h-64 overflow-y-auto rounded-lg border border-border/60">
-          {filtered.length === 0 ? (
-            <p className="py-6 text-center text-xs text-muted-foreground">
-              No hay productos que coincidan.
-            </p>
-          ) : (
-            <ul className="divide-y divide-border/50">
-              {filtered.map((product) => {
-                const checked = selected.has(product.id);
-                return (
-                  <li key={product.id}>
-                    <label className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm transition-colors hover:bg-muted/40">
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => toggle(product.id)}
-                        className="accent-primary"
-                      />
-                      <div className="relative size-9 shrink-0 overflow-hidden rounded-md bg-muted/40">
-                        {product.imageUrl && (
-                          <Image
-                            src={product.imageUrl}
-                            alt={product.name}
-                            fill
-                            unoptimized
-                            className="object-cover"
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium" htmlFor="dlg-promo-title">
+              Título
+            </label>
+            <Input
+              id="dlg-promo-title"
+              name="title"
+              defaultValue={editing?.title ?? ""}
+              placeholder="Liquidación de invierno"
+              required
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium" htmlFor="dlg-promo-cta">
+              Texto del botón
+            </label>
+            <Input
+              id="dlg-promo-cta"
+              name="ctaLabel"
+              defaultValue={editing?.ctaLabel ?? "Ver promoción"}
+              placeholder="Ver promoción"
+            />
+          </div>
+
+          <div className="space-y-1.5 md:col-span-2">
+            <label className="text-sm font-medium" htmlFor="dlg-promo-subtitle">
+              Subtítulo (opcional)
+            </label>
+            <Textarea
+              id="dlg-promo-subtitle"
+              name="subtitle"
+              defaultValue={editing?.subtitle ?? ""}
+              placeholder="Hasta 30% off en toda la línea industrial"
+              className="min-h-14 resize-none"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium" htmlFor="dlg-promo-sort">
+              Orden
+            </label>
+            <Input
+              id="dlg-promo-sort"
+              name="sortOrder"
+              type="number"
+              defaultValue={String(editing?.sortOrder ?? 0)}
+            />
+          </div>
+
+          <label className="flex items-center gap-2 rounded-lg border border-border/60 px-3 py-2 text-sm">
+            <input
+              type="checkbox"
+              name="isActive"
+              defaultChecked={editing?.isActive ?? true}
+              className="accent-primary"
+            />
+            Activa en el shop
+          </label>
+
+          <div className="space-y-2 md:col-span-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">
+                Productos relacionados{" "}
+                <span className="text-xs font-normal text-muted-foreground">
+                  ({selected.size} seleccionados)
+                </span>
+              </label>
+              <div className="relative w-48">
+                <HugeiconsIcon
+                  icon={Search01Icon}
+                  size={13}
+                  strokeWidth={2}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/50"
+                />
+                <Input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Buscar producto"
+                  className="h-8 pl-8 text-xs"
+                />
+              </div>
+            </div>
+
+            <div className="max-h-64 overflow-y-auto rounded-lg border border-border/60">
+              {filtered.length === 0 ? (
+                <p className="py-6 text-center text-xs text-muted-foreground">
+                  No hay productos que coincidan.
+                </p>
+              ) : (
+                <ul className="divide-y divide-border/50">
+                  {filtered.map((product) => {
+                    const checked = selected.has(product.id);
+                    return (
+                      <li key={product.id}>
+                        <label className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm transition-colors hover:bg-muted/40">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggle(product.id)}
+                            className="accent-primary"
                           />
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{product.name}</p>
-                        <p className="truncate text-[11px] text-muted-foreground">
-                          {product.brand} · {product.categoryName}
-                        </p>
-                      </div>
-                      <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                        {formatCurrency(product.salePriceCents ?? product.priceCents)}
-                      </span>
-                    </label>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+                          <div className="relative size-9 shrink-0 overflow-hidden rounded-md bg-muted/40">
+                            {product.imageUrl && (
+                              <Image
+                                src={product.imageUrl}
+                                alt={product.name}
+                                fill
+                                unoptimized
+                                className="object-cover"
+                              />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-medium">{product.name}</p>
+                            <p className="truncate text-[11px] text-muted-foreground">
+                              {product.brand} · {product.categoryName}
+                            </p>
+                          </div>
+                          <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                            {formatCurrency(product.salePriceCents ?? product.priceCents)}
+                          </span>
+                        </label>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      <DialogFooter className="md:col-span-2">
-        <Button type="submit" size="sm" disabled={isPending}>
-          {isPending ? "Guardando..." : "Guardar promoción"}
-        </Button>
-      </DialogFooter>
+      <div className="shrink-0 border-t border-border/40 bg-popover px-6 py-4">
+        <DialogFooter>
+          <Button type="submit" size="sm" disabled={isPending}>
+            {isPending ? "Guardando..." : "Guardar promoción"}
+          </Button>
+        </DialogFooter>
+      </div>
     </form>
   );
 }
