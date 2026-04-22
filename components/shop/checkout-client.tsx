@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useCallback, useMemo, useState } from "react";
+import { startTransition, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -85,6 +85,21 @@ export function CheckoutClient({
     notes: cart.notes,
   });
 
+  const hasUnsavedChanges =
+    form.customerCompany.trim().length > 0 ||
+    form.customerName.trim().length > 0 ||
+    form.customerPhone.trim().length > 0 ||
+    form.customerEmail.trim().length > 0;
+
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [hasUnsavedChanges]);
+
   const updateField = useCallback(
     (field: keyof FormState) =>
       (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -120,7 +135,7 @@ export function CheckoutClient({
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-20">
         <HugeiconsIcon icon={Loading01Icon} size={20} strokeWidth={2} className="animate-spin text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">Cargando carrito...</p>
+        <p className="text-sm text-muted-foreground">Cargando carrito\u2026</p>
       </div>
     );
   }
@@ -199,7 +214,7 @@ export function CheckoutClient({
                   }
 
                   toast.success("Pedido registrado", {
-                    description: "Redirigiendo a la confirmación...",
+                    description: "Redirigiendo a la confirmaci\u00f3n\u2026",
                   });
 
                   cart.clearCart();
@@ -217,7 +232,8 @@ export function CheckoutClient({
             <FieldGroup label="Empresa" htmlFor="customerCompany" required className="md:col-span-2">
               <Input
                 id="customerCompany"
-                placeholder="Razón social o nombre del negocio"
+                placeholder="Razón social o nombre del negocio…"
+                autoComplete="organization"
                 value={form.customerCompany}
                 onChange={updateField("customerCompany")}
                 required
@@ -228,7 +244,8 @@ export function CheckoutClient({
             <FieldGroup label="Contacto" htmlFor="customerName" required>
               <Input
                 id="customerName"
-                placeholder="Nombre y apellido"
+                placeholder="Nombre y apellido…"
+                autoComplete="name"
                 value={form.customerName}
                 onChange={updateField("customerName")}
                 required
@@ -241,6 +258,7 @@ export function CheckoutClient({
                 id="customerPhone"
                 type="tel"
                 placeholder="+54 11 1234-5678"
+                autoComplete="tel"
                 value={form.customerPhone}
                 onChange={updateField("customerPhone")}
                 required
@@ -253,6 +271,8 @@ export function CheckoutClient({
                 id="customerEmail"
                 type="email"
                 placeholder="compras@empresa.com"
+                autoComplete="email"
+                spellCheck={false}
                 value={form.customerEmail}
                 onChange={updateField("customerEmail")}
                 required
@@ -264,6 +284,8 @@ export function CheckoutClient({
               <Input
                 id="taxId"
                 placeholder="20-12345678-9"
+                autoComplete="off"
+                spellCheck={false}
                 value={form.taxId}
                 onChange={updateField("taxId")}
                 disabled={isSubmitting}
@@ -273,7 +295,8 @@ export function CheckoutClient({
             <FieldGroup label="Ciudad de entrega" htmlFor="deliveryCity" required className="md:col-span-2">
               <Input
                 id="deliveryCity"
-                placeholder="Localidad y provincia"
+                placeholder="Localidad y provincia…"
+                autoComplete="address-level2"
                 value={form.deliveryCity}
                 onChange={updateField("deliveryCity")}
                 required
@@ -286,7 +309,7 @@ export function CheckoutClient({
                 id="notes"
                 value={form.notes}
                 onChange={updateField("notes")}
-                placeholder="Horarios de recepción, reemplazos aceptados, indicaciones de entrega..."
+                placeholder="Horarios de recepción, reemplazos aceptados, indicaciones de entrega\u2026"
                 className="min-h-20 resize-none"
                 disabled={isSubmitting}
               />
@@ -294,7 +317,7 @@ export function CheckoutClient({
 
             <div className="md:col-span-2">
               {purchaseValidationMessages.length > 0 && (
-                <div className="mb-3 rounded-xl border border-amber-300/70 bg-amber-50/80 p-3 text-sm text-amber-950">
+                <div aria-live="polite" className="mb-3 rounded-xl border border-amber-300/70 bg-amber-50/80 p-3 text-sm text-amber-950">
                   {purchaseValidationMessages.map((message) => (
                     <p key={message}>{message}</p>
                   ))}
@@ -309,7 +332,7 @@ export function CheckoutClient({
                 {isSubmitting ? (
                   <>
                     <HugeiconsIcon icon={Loading01Icon} size={16} strokeWidth={2} className="animate-spin" />
-                    Registrando...
+                    Registrando\u2026
                   </>
                 ) : (
                   <>

@@ -133,7 +133,7 @@ export function CatalogClient({
             </div>
             <div>
               <Button type="submit" size="sm" disabled={isSavingSettings}>
-                {isSavingSettings ? "Guardando..." : "Guardar configuracion"}
+                {isSavingSettings ? "Guardando\u2026" : "Guardar configuracion"}
               </Button>
             </div>
           </form>
@@ -456,7 +456,7 @@ export function CatalogClient({
             <div className="shrink-0 border-t border-border/40 bg-popover px-6 py-4">
               <DialogFooter>
                 <Button type="submit" size="sm" disabled={isPending}>
-                  {isPending ? "Guardando..." : "Guardar producto"}
+                  {isPending ? "Guardando\u2026" : "Guardar producto"}
                 </Button>
               </DialogFooter>
             </div>
@@ -533,7 +533,7 @@ export function CatalogClient({
             </div>
             <DialogFooter>
               <Button type="submit" size="sm" disabled={isPending}>
-                {isPending ? "Guardando..." : "Guardar categoría"}
+                {isPending ? "Guardando\u2026" : "Guardar categoría"}
               </Button>
             </DialogFooter>
           </form>

@@ -55,7 +55,7 @@ export function AdminShell({
               <Link
                 key={item.href}
                 href={item.href}
-                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-[background-color,color] duration-150 ease-out hover:bg-muted hover:text-foreground"
               >
                 <HugeiconsIcon icon={item.icon} size={13} strokeWidth={2} />
                 {item.label}

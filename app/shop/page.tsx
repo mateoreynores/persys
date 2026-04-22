@@ -129,7 +129,7 @@ export default async function ShopPage({
                     id="category"
                     name="category"
                     defaultValue={category}
-                    className="h-9 w-full rounded-md border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                    className="h-9 w-full rounded-md border border-input bg-background px-2.5 text-sm text-foreground outline-none transition-[border-color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                   >
                     <option value="">Todas</option>
                     {snapshot.categories.map((item) => (

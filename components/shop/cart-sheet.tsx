@@ -109,14 +109,15 @@ export function CartSheet({ cartMinimumAmountCents = 0 }: { cartMinimumAmountCen
           ) : (
             <>
               <div className="space-y-2">
-                {cart.items.map((item) => {
+                {cart.items.map((item, index) => {
                   const unit = item.salePriceCents ?? item.unitPriceCents;
                   const hasImage = Boolean(item.imageUrl);
                   const minimumQuantity = normalizeMinimumQuantity(item.minimumQuantity) ?? 1;
                   return (
                     <article
                       key={item.productId}
-                      className="flex gap-3 rounded-xl border border-border/50 bg-card p-2.5"
+                      className="flex gap-3 rounded-xl border border-border/50 bg-card p-2.5 animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
+                      style={{ animationDelay: `${index * 50}ms`, animationDuration: "300ms" }}
                     >
                       {/* Thumbnail */}
                       <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-muted/40">
@@ -219,7 +220,7 @@ export function CartSheet({ cartMinimumAmountCents = 0 }: { cartMinimumAmountCen
                   id="cart-notes"
                   value={cart.notes}
                   onChange={(event) => cart.setNotes(event.target.value)}
-                  placeholder="Priorizar entrega, reemplazos permitidos, horarios..."
+                  placeholder="Priorizar entrega, reemplazos permitidos, horarios\u2026"
                   className="min-h-14 resize-none text-sm"
                 />
               </div>
@@ -254,7 +255,7 @@ export function CartSheet({ cartMinimumAmountCents = 0 }: { cartMinimumAmountCen
                 </div>
               </div>
               {validationMessages.length > 0 && (
-                <div className="rounded-xl border border-amber-300/70 bg-amber-50/80 p-3 text-xs text-amber-950">
+                <div aria-live="polite" className="rounded-xl border border-amber-300/70 bg-amber-50/80 p-3 text-xs text-amber-950">
                   {validationMessages.map((message) => (
                     <p key={message}>{message}</p>
                   ))}

@@ -436,7 +436,7 @@ function PromoForm({
       <div className="shrink-0 border-t border-border/40 bg-popover px-6 py-4">
         <DialogFooter>
           <Button type="submit" size="sm" disabled={isPending}>
-            {isPending ? "Guardando..." : "Guardar promoción"}
+            {isPending ? "Guardando\u2026" : "Guardar promoción"}
           </Button>
         </DialogFooter>
       </div>

@@ -3,6 +3,7 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant hover (&:hover) @media (hover: hover) and (pointer: fine);
 
 @theme {
   --font-sans: var(--font-sans);
@@ -132,6 +133,17 @@
   /* Staggered skeleton animation */
   .animate-pulse {
     animation-fill-mode: both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

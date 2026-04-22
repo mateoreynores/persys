@@ -118,7 +118,7 @@ export function PromoCarousel({ promos }: { promos: PromoBannerWithProducts[] })
                   onClick={() => scrollTo(index)}
                   aria-label={`Ir a la promoción ${index + 1}`}
                   className={cn(
-                    "h-1.5 rounded-full transition-all duration-300",
+                    "h-1.5 rounded-full transition-[width,background-color] duration-200 ease-out",
                     index === selectedIndex
                       ? "w-6 bg-foreground"
                       : "w-1.5 bg-foreground/25 hover:bg-foreground/40",
@@ -193,7 +193,7 @@ function PromoTile({
               icon={ArrowRight01Icon}
               size={13}
               strokeWidth={2.5}
-              className="transition-transform group-hover:translate-x-0.5"
+              className="transition-transform duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] group-hover:translate-x-1"
             />
           </span>
           <span className="text-[11px] text-white/70 tabular-nums">

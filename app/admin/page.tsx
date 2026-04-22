@@ -172,6 +172,7 @@ export default async function AdminDashboardPage() {
                       <TableCell>
                         <Link
                           href={`/admin/orders/${order.id}`}
+                          aria-label={`Ver pedido ${order.orderNumber}`}
                           className={cn(
                             buttonVariants({ variant: "ghost", size: "icon-xs" }),
                           )}
