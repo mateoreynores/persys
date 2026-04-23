@@ -12,15 +12,14 @@ const notoSans = Noto_Sans({subsets:['latin'],variable:'--font-sans'});
 const figtreeHeading = Figtree({subsets:['latin'],variable:'--font-heading'});
 
 export const metadata: Metadata = {
-  title: "Persys | Distribución mayorista y verificación comercial",
+  title: "Persys | Distribuidora mayorista para comercios",
   description:
-    "Presencia comercial de Persys para distribución mayorista, atención por WhatsApp Business y verificación empresarial.",
+    "Persys es una distribuidora mayorista que abastece supermercados, almacenes y comercios minoristas con productos de consumo masivo.",
   keywords: [
-    "distribuidora",
-    "mayorista",
-    "supermercados",
-    "whatsapp business",
-    "verificacion comercial",
+    "distribuidora mayorista",
+    "productos para supermercados",
+    "abastecimiento comercios",
+    "consumo masivo",
     "Persys",
   ],
 };
