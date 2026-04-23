@@ -38,7 +38,7 @@ export default function Home() {
               </p>
 
               <h1 className="mt-4 text-3xl font-semibold leading-[1.15] text-balance sm:text-4xl lg:text-5xl">
-                Productos para tu comercio, directo a tu negocio.
+                Todo lo que tu comercio necesita, en una sola entrega.
               </h1>
 
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
