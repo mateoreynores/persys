@@ -7,7 +7,6 @@ import {
 } from "@hugeicons/core-free-icons";
 
 import { SiteFooter } from "@/components/site/site-footer";
-import { SiteHeader } from "@/components/site/site-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { getBusinessWhatsAppNumber } from "@/lib/env";
 
@@ -19,7 +18,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <SiteHeader showCatalogLink={false} showCheckoutCta={false} />
+      <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 pt-6 sm:px-6 lg:px-8">
+        <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
+          <span className="text-[11px] font-bold tracking-tight">P</span>
+        </div>
+        <span className="text-sm font-semibold tracking-tight">Persys</span>
+      </div>
 
       <main>
         {/* Hero */}
