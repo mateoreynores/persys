@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Manrope, Noto_Sans, Figtree } from "next/font/google";
+import { Noto_Sans, Figtree } from "next/font/google";
 
 import { Providers } from "@/components/providers";
 import { isClerkConfigured } from "@/lib/env";
@@ -12,15 +12,15 @@ const notoSans = Noto_Sans({subsets:['latin'],variable:'--font-sans'});
 const figtreeHeading = Figtree({subsets:['latin'],variable:'--font-heading'});
 
 export const metadata: Metadata = {
-  title: "Persys | Catálogo B2B y administración comercial",
+  title: "Persys | Distribución mayorista y verificación comercial",
   description:
-    "Landing, catálogo B2B, checkout por WhatsApp y panel administrativo para pedidos y catálogo de Persys.",
+    "Presencia comercial de Persys para distribución mayorista, atención por WhatsApp Business y verificación empresarial.",
   keywords: [
     "distribuidora",
     "mayorista",
     "supermercados",
-    "shop b2b",
-    "panel pedidos",
+    "whatsapp business",
+    "verificacion comercial",
     "Persys",
   ],
 };

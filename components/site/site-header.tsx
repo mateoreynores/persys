@@ -11,16 +11,21 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/", label: "Inicio" },
   { href: "/shop", label: "Catálogo" },
-  { href: "/admin", label: "Admin" },
 ];
 
 export function SiteHeader({
   cartSlot,
   compact = false,
+  showCatalogLink = true,
+  showCheckoutCta = true,
 }: {
   cartSlot?: React.ReactNode;
   compact?: boolean;
+  showCatalogLink?: boolean;
+  showCheckoutCta?: boolean;
 }) {
+  const visibleLinks = showCatalogLink ? links : links.filter((item) => item.href !== "/shop");
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-sm">
       <div
@@ -30,7 +35,7 @@ export function SiteHeader({
         )}
       >
         <div className="flex items-center gap-2">
-          <MobileNav />
+          <MobileNav showCatalogLink={showCatalogLink} />
           <Link href="/" className="flex items-center gap-2">
             <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <span className="text-[11px] font-bold tracking-tight">P</span>
@@ -40,7 +45,7 @@ export function SiteHeader({
         </div>
 
         <nav className="hidden items-center gap-0.5 md:flex">
-          {links.map((item) => (
+          {visibleLinks.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -53,13 +58,15 @@ export function SiteHeader({
 
         <div className="flex items-center gap-2">
           {cartSlot}
-          <Link
-            href="/shop/checkout"
-            className={cn(buttonVariants({ size: "sm" }), "hidden gap-1.5 sm:inline-flex")}
-          >
-            Hacer pedido
-            <HugeiconsIcon icon={ArrowRight01Icon} size={14} strokeWidth={2} />
-          </Link>
+          {showCheckoutCta && (
+            <Link
+              href="/shop/checkout"
+              className={cn(buttonVariants({ size: "sm" }), "hidden gap-1.5 sm:inline-flex")}
+            >
+              Hacer pedido
+              <HugeiconsIcon icon={ArrowRight01Icon} size={14} strokeWidth={2} />
+            </Link>
+          )}
         </div>
       </div>
     </header>

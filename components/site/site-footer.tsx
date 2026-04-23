@@ -4,10 +4,17 @@ const links = [
   { href: "/", label: "Inicio" },
   { href: "/shop", label: "Catálogo" },
   { href: "/shop/checkout", label: "Checkout" },
-  { href: "/admin", label: "Admin" },
 ];
 
-export function SiteFooter() {
+export function SiteFooter({
+  showCatalogLinks = true,
+}: {
+  showCatalogLinks?: boolean;
+}) {
+  const visibleLinks = showCatalogLinks
+    ? links
+    : links.filter((link) => link.href !== "/shop" && link.href !== "/shop/checkout");
+
   return (
     <footer className="border-t border-border/40">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
@@ -19,7 +26,7 @@ export function SiteFooter() {
         </div>
 
         <nav className="flex flex-wrap items-center gap-x-4 gap-y-1">
-          {links.map((link) => (
+          {visibleLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}

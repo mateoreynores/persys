@@ -1,23 +1,6 @@
 import Link from "next/link";
-import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  DashboardSquare01Icon,
-  Megaphone01Icon,
-  Package01Icon,
-  ShoppingCart01Icon,
-  Store01Icon,
-} from "@hugeicons/core-free-icons";
 
 import { AdminUserMenu } from "@/components/admin/admin-user-menu";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-
-const navItems = [
-  { href: "/admin", label: "Dashboard", icon: DashboardSquare01Icon },
-  { href: "/admin/catalog", label: "Catálogo", icon: Package01Icon },
-  { href: "/admin/promos", label: "Promos", icon: Megaphone01Icon },
-  { href: "/admin/orders", label: "Pedidos", icon: ShoppingCart01Icon },
-];
 
 export function AdminShell({
   children,
@@ -50,30 +33,7 @@ export function AdminShell({
             )}
           </div>
 
-          <nav className="hidden items-center gap-0.5 md:flex">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-[background-color,color] duration-150 ease-out hover:bg-muted hover:text-foreground"
-              >
-                <HugeiconsIcon icon={item.icon} size={13} strokeWidth={2} />
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
           <div className="flex items-center gap-2">
-            <Link
-              href="/shop"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "sm" }),
-                "hidden gap-1.5 text-xs sm:inline-flex",
-              )}
-            >
-              <HugeiconsIcon icon={Store01Icon} size={13} strokeWidth={2} />
-              Shop
-            </Link>
             <AdminUserMenu />
           </div>
         </div>

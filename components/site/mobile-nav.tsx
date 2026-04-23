@@ -16,10 +16,15 @@ import {
 const links = [
   { href: "/", label: "Inicio" },
   { href: "/shop", label: "Catálogo" },
-  { href: "/admin", label: "Admin" },
 ];
 
-export function MobileNav() {
+export function MobileNav({
+  showCatalogLink = true,
+}: {
+  showCatalogLink?: boolean;
+}) {
+  const visibleLinks = showCatalogLink ? links : links.filter((item) => item.href !== "/shop");
+
   return (
     <Sheet>
       <SheetTrigger
@@ -41,7 +46,7 @@ export function MobileNav() {
           </SheetTitle>
         </SheetHeader>
         <nav className="flex flex-col gap-1 px-4">
-          {links.map((item) => (
+          {visibleLinks.map((item) => (
             <Link
               key={item.href}
               href={item.href}

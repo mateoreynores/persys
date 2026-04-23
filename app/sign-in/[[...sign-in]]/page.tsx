@@ -59,9 +59,7 @@ export default async function SignInPage({
         routing="path"
         forceRedirectUrl="/admin"
         fallbackRedirectUrl="/admin"
-        signUpForceRedirectUrl="/admin"
-        signUpFallbackRedirectUrl="/admin"
-        withSignUp
+        withSignUp={false}
       />
     </main>
   );
